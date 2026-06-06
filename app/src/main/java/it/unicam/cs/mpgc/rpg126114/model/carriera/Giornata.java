@@ -17,6 +17,7 @@ public class Giornata {
     private final int animePreviste;
     private final Regolamento regolamento;
     private final List<Verdetto> verdettiDelGiorno = new ArrayList<>();
+    private int casiSenzaVerdetto;
 
     /**
      * @param numero        numero progressivo della giornata, almeno 1
@@ -76,16 +77,34 @@ public class Giornata {
     }
 
     /**
-     * @return true se tutte le anime previste sono state giudicate
+     * Registra un caso chiuso senza verdetto, come la denuncia di un
+     * impostore: l'anima non viene archiviata ma il caso conta per la
+     * chiusura della giornata.
+     *
+     * @throws IllegalStateException se la giornata e' gia' conclusa
      */
-    public boolean isConclusa() {
-        return verdettiDelGiorno.size() >= animePreviste;
+    public void registraCasoSenzaVerdetto() {
+        if (isConclusa()) {
+            throw new IllegalStateException("La giornata " + numero + " e' gia' conclusa");
+        }
+        casiSenzaVerdetto++;
+    }
+
+    public int getCasiSenzaVerdetto() {
+        return casiSenzaVerdetto;
     }
 
     /**
-     * @return quante anime restano da giudicare oggi
+     * @return true se tutti i casi previsti sono stati chiusi
+     */
+    public boolean isConclusa() {
+        return verdettiDelGiorno.size() + casiSenzaVerdetto >= animePreviste;
+    }
+
+    /**
+     * @return quanti casi restano da chiudere oggi
      */
     public int animeRimanenti() {
-        return animePreviste - verdettiDelGiorno.size();
+        return animePreviste - verdettiDelGiorno.size() - casiSenzaVerdetto;
     }
 }
