@@ -1,0 +1,431 @@
+[
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Ettore Malacarne",
+      "annoMorte": 1923,
+      "peccati": [
+        { "descrizione": "Usura ai danni del vicinato", "gravita": 8 },
+        { "descrizione": "Avarizia proverbiale", "gravita": 5 }
+      ],
+      "virtu": [
+        { "descrizione": "Puntualita' nei pagamenti delle tasse", "merito": 2 }
+      ],
+      "dichiarazioni": [
+        "Prestavo denaro per generosita', gli interessi erano un dettaglio.",
+        "Il vicinato esagera sempre."
+      ]
+    }
+  },
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Rosa Benedetti",
+      "annoMorte": 1958,
+      "peccati": [{ "descrizione": "Pettegolezzo sistematico", "gravita": 3 }],
+      "virtu": [
+        { "descrizione": "Una vita a curare i malati del paese", "merito": 9 },
+        { "descrizione": "Adozione di sette orfani", "merito": 8 }
+      ],
+      "dichiarazioni": [
+        "Ho fatto quel che andava fatto, senza chiedere nulla.",
+        "Si', parlavo dei vicini. Ma solo cose vere."
+      ]
+    }
+  },
+  {
+    "tipo": "illustre",
+    "dati": {
+      "nome": "Goffredo dei Brivido",
+      "annoMorte": 1789,
+      "titolo": "Marchese",
+      "peccati": [
+        { "descrizione": "Tradimento del proprio casato", "gravita": 9 },
+        { "descrizione": "Gola smodata ai banchetti", "gravita": 4 }
+      ],
+      "virtu": [
+        { "descrizione": "Mecenate di pittori squattrinati", "merito": 5 }
+      ],
+      "dichiarazioni": [
+        "Un Marchese non tradisce: ricolloca le proprie fedelta'.",
+        "I banchetti erano doveri istituzionali."
+      ]
+    }
+  },
+  {
+    "tipo": "errante",
+    "dati": {
+      "nome": "Bice della Nebbia",
+      "annoMorte": 1601,
+      "peccati": [{ "descrizione": "Furto di reliquie", "gravita": 7 }],
+      "virtu": [
+        { "descrizione": "Protezione dei viandanti smarriti", "merito": 6 }
+      ],
+      "dichiarazioni": ["Ricordo un campanile, e poi la nebbia."]
+    }
+  },
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Olga Ferrazzi",
+      "annoMorte": 1999,
+      "peccati": [
+        { "descrizione": "Evasione fiscale creativa", "gravita": 6 },
+        { "descrizione": "Falso in bilancio", "gravita": 7 }
+      ],
+      "virtu": [
+        {
+          "descrizione": "Borse di studio anonime per studenti poveri",
+          "merito": 7
+        }
+      ],
+      "dichiarazioni": [
+        "I bilanci sono opinioni, i miei erano poesia.",
+        "Nessuno sapeva delle borse di studio. Nemmeno il fisco."
+      ]
+    }
+  },
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Primo Scarsella",
+      "annoMorte": 1944,
+      "peccati": [{ "descrizione": "Mercato nero del sale", "gravita": 5 }],
+      "virtu": [
+        {
+          "descrizione": "Nascose tre famiglie ricercate in soffitta",
+          "merito": 10
+        }
+      ],
+      "dichiarazioni": ["Il sale lo vendevo caro, le vite le salvavo gratis."]
+    }
+  },
+  {
+    "tipo": "illustre",
+    "dati": {
+      "nome": "Aurelia di Roccafredda",
+      "annoMorte": 1871,
+      "titolo": "Contessa",
+      "peccati": [
+        { "descrizione": "Duelli ordinati per noia", "gravita": 8 },
+        { "descrizione": "Superbia leggendaria", "gravita": 6 }
+      ],
+      "virtu": [
+        { "descrizione": "Fondazione di un ospedale di campagna", "merito": 6 }
+      ],
+      "dichiarazioni": [
+        "I duelli erano spettacolo culturale.",
+        "L'ospedale l'ho fondato io, le malattie no."
+      ]
+    }
+  },
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Lino Quaresima",
+      "annoMorte": 1982,
+      "peccati": [
+        { "descrizione": "Invidia del successo altrui", "gravita": 4 },
+        { "descrizione": "Pigrizia monumentale", "gravita": 3 }
+      ],
+      "virtu": [
+        { "descrizione": "Volontariato domenicale al canile", "merito": 4 }
+      ],
+      "dichiarazioni": [
+        "Invidiavo solo chi non meritava. Quindi quasi tutti.",
+        "La domenica pero' mi alzavo presto. Per i cani."
+      ]
+    }
+  },
+  {
+    "tipo": "errante",
+    "dati": {
+      "nome": "Tommaso il Guado",
+      "annoMorte": 1348,
+      "peccati": [{ "descrizione": "Contrabbando sul fiume", "gravita": 4 }],
+      "virtu": [
+        {
+          "descrizione": "Traghettava i pellegrini senza pedaggio",
+          "merito": 5
+        }
+      ],
+      "dichiarazioni": ["C'era un fiume. O forse era un fosso. C'era acqua."]
+    }
+  },
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Santina Operosa",
+      "annoMorte": 2004,
+      "peccati": [],
+      "virtu": [
+        { "descrizione": "Quarant'anni di mensa per i poveri", "merito": 9 },
+        { "descrizione": "Perdono pubblico del torto subito", "merito": 7 }
+      ],
+      "dichiarazioni": ["Non ho fretta: ho sempre fatto la fila anche in vita."]
+    }
+  },
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Gualtiero Bisca",
+      "annoMorte": 1967,
+      "peccati": [
+        { "descrizione": "Bische clandestine in canonica", "gravita": 7 },
+        { "descrizione": "Bari' anche col parroco", "gravita": 5 }
+      ],
+      "virtu": [
+        {
+          "descrizione": "Vincite devolute (in parte) al restauro del tetto",
+          "merito": 3
+        }
+      ],
+      "dichiarazioni": [
+        "Il tetto della canonica l'ho pagato io, carte alla mano.",
+        "Il parroco perdeva perche' giocava male."
+      ]
+    }
+  },
+  {
+    "tipo": "illustre",
+    "dati": {
+      "nome": "Ottavio Grandinetti",
+      "annoMorte": 1910,
+      "titolo": "Senatore",
+      "peccati": [
+        { "descrizione": "Voti comprati con prosciutti", "gravita": 7 },
+        { "descrizione": "Promesse elettorali mai mantenute", "gravita": 6 }
+      ],
+      "virtu": [
+        { "descrizione": "Una ferrovia che serviva davvero", "merito": 6 }
+      ],
+      "dichiarazioni": [
+        "I prosciutti erano doni istituzionali a elettori affamati.",
+        "La ferrovia arrivava puntuale, come le mie smentite."
+      ]
+    }
+  },
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Imelda Crespi",
+      "annoMorte": 1991,
+      "peccati": [
+        {
+          "descrizione": "Sabotaggio delle torte rivali alla sagra",
+          "gravita": 3
+        }
+      ],
+      "virtu": [
+        { "descrizione": "Ricette donate all'ospizio", "merito": 5 },
+        { "descrizione": "Pazienza con un marito impossibile", "merito": 6 }
+      ],
+      "dichiarazioni": [
+        "Il sale nelle torte altrui ce lo metteva il destino.",
+        "Mio marito e' gia' qui? Allora ho fretta di andare altrove."
+      ]
+    }
+  },
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Nereo Fondacci",
+      "annoMorte": 1975,
+      "peccati": [
+        { "descrizione": "Vendita di vino annacquato", "gravita": 5 },
+        { "descrizione": "Bestemmie da cantiere", "gravita": 2 }
+      ],
+      "virtu": [
+        { "descrizione": "Salvataggio di un bambino dal canale", "merito": 8 }
+      ],
+      "dichiarazioni": [
+        "L'acqua nel vino era un servizio: cosi' nessuno si ubriacava.",
+        "Il canale era gelido, il bambino pesava."
+      ]
+    }
+  },
+  {
+    "tipo": "errante",
+    "dati": {
+      "nome": "Fiordaliso Smarrita",
+      "annoMorte": 1522,
+      "peccati": [
+        { "descrizione": "Fuga con la cassa della corporazione", "gravita": 6 }
+      ],
+      "virtu": [
+        { "descrizione": "Restitui' tutto, con gli interessi", "merito": 7 }
+      ],
+      "dichiarazioni": [
+        "La cassa... la presi o la resi? Ricordo entrambe le cose."
+      ]
+    }
+  },
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Properzio Vanni",
+      "annoMorte": 2011,
+      "peccati": [
+        {
+          "descrizione": "Recensioni false al ristorante del cugino",
+          "gravita": 3
+        },
+        { "descrizione": "Plagio della tesi di laurea", "gravita": 7 }
+      ],
+      "virtu": [
+        { "descrizione": "Donatore di sangue instancabile", "merito": 6 }
+      ],
+      "dichiarazioni": [
+        "La tesi era un omaggio alla letteratura esistente.",
+        "Il mio sangue, almeno, era originale."
+      ]
+    }
+  },
+  {
+    "tipo": "illustre",
+    "dati": {
+      "nome": "Clotilde di Vetrate",
+      "annoMorte": 1888,
+      "titolo": "Badessa",
+      "peccati": [
+        { "descrizione": "Orgoglio per la propria umilta'", "gravita": 4 }
+      ],
+      "virtu": [
+        {
+          "descrizione": "Scuola gratuita per le figlie dei braccianti",
+          "merito": 9
+        },
+        { "descrizione": "Digiuni offerti per i peccatori", "merito": 6 }
+      ],
+      "dichiarazioni": ["Ero la piu' umile della regione, e lo sapevano tutti."]
+    }
+  },
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Casimiro Polvere",
+      "annoMorte": 1936,
+      "peccati": [
+        { "descrizione": "Frode assicurativa col fienile", "gravita": 7 },
+        { "descrizione": "Incendio doloso del medesimo fienile", "gravita": 8 }
+      ],
+      "virtu": [
+        {
+          "descrizione": "Gentilezza con gli animali (salvati dal fienile)",
+          "merito": 4
+        }
+      ],
+      "dichiarazioni": [
+        "Il fienile era vecchio, l'assicurazione ricca: questione di equilibrio.",
+        "Le galline le avevo messe in salvo prima. Non sono un mostro."
+      ]
+    }
+  },
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Verdiana Lupi",
+      "annoMorte": 2018,
+      "peccati": [{ "descrizione": "Ira al volante e altrove", "gravita": 4 }],
+      "virtu": [
+        { "descrizione": "Pompiere volontaria per vent'anni", "merito": 9 }
+      ],
+      "dichiarazioni": ["Urlavo nel traffico, ma correvo negli incendi."]
+    }
+  },
+  {
+    "tipo": "illustre",
+    "dati": {
+      "nome": "Bonifacio Mezzanotte",
+      "annoMorte": 1699,
+      "titolo": "Cardinale",
+      "peccati": [
+        { "descrizione": "Simonia con listino prezzi", "gravita": 9 },
+        { "descrizione": "Nepotismo a tre generazioni", "gravita": 6 }
+      ],
+      "virtu": [
+        { "descrizione": "Biblioteca aperta anche ai laici", "merito": 5 }
+      ],
+      "dichiarazioni": [
+        "Il listino era solo un suggerimento di donativo.",
+        "I miei nipoti erano oggettivamente i piu' qualificati."
+      ]
+    }
+  },
+  {
+    "tipo": "errante",
+    "dati": {
+      "nome": "Astolfo Senzaporto",
+      "annoMorte": 1665,
+      "peccati": [{ "descrizione": "Pirateria dilettantistica", "gravita": 6 }],
+      "virtu": [
+        {
+          "descrizione": "Non affondo' mai nessuno (per incapacita' o bonta')",
+          "merito": 4
+        }
+      ],
+      "dichiarazioni": ["Il mare... grande. La nave... piccola. Io... confuso."]
+    }
+  },
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Zelinda Forbici",
+      "annoMorte": 1952,
+      "peccati": [
+        {
+          "descrizione": "Taglio e cucito di documenti catastali",
+          "gravita": 7
+        }
+      ],
+      "virtu": [
+        {
+          "descrizione": "Vestiti gratis per i bambini del quartiere",
+          "merito": 7
+        },
+        { "descrizione": "Onesta' totale fuori dal catasto", "merito": 3 }
+      ],
+      "dichiarazioni": [
+        "I confini dei campi erano opinabili, gli orli dei pantaloni no."
+      ]
+    }
+  },
+  {
+    "tipo": "comune",
+    "dati": {
+      "nome": "Demetrio Fulmini",
+      "annoMorte": 2020,
+      "peccati": [
+        { "descrizione": "Truffe telefoniche agli anziani", "gravita": 9 },
+        { "descrizione": "Nessun rimorso documentato", "gravita": 5 }
+      ],
+      "virtu": [],
+      "dichiarazioni": [
+        "Erano investimenti ad alto rischio, mica truffe.",
+        "Qualcuno ci ha pure guadagnato. Io, per esempio."
+      ]
+    }
+  },
+  {
+    "tipo": "illustre",
+    "dati": {
+      "nome": "Ersilia delle Fontane",
+      "annoMorte": 1931,
+      "titolo": "Prima Donna",
+      "peccati": [
+        {
+          "descrizione": "Capricci che rovinarono tre impresari",
+          "gravita": 5
+        },
+        { "descrizione": "Vanita' oltre ogni palcoscenico", "gravita": 4 }
+      ],
+      "virtu": [
+        { "descrizione": "Concerti gratuiti negli ospedali", "merito": 7 }
+      ],
+      "dichiarazioni": [
+        "Gli impresari si rovinano da soli: io fornivo solo l'occasione.",
+        "Cantavo gratis per i malati. I sani pagavano il doppio."
+      ]
+    }
+  }
+]
