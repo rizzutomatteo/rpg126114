@@ -1,0 +1,127 @@
+/* Pratiche Infernali - foglio di stile dell'ufficio ultraterreno */
+
+.schermata {
+  -fx-background-color: #241f2b;
+}
+
+.titolo {
+  -fx-font-size: 30px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #e8b54d;
+}
+
+.sottotitolo {
+  -fx-font-size: 14px;
+  -fx-text-fill: #b5a88f;
+}
+
+.label {
+  -fx-text-fill: #e6dcc8;
+}
+
+.intestazione {
+  -fx-font-weight: bold;
+  -fx-text-fill: #e8b54d;
+}
+
+.barra-stato,
+.barra-verdetti {
+  -fx-background-color: #2f2839;
+}
+
+.button {
+  -fx-background-color: #4a3f5c;
+  -fx-text-fill: #f0e9d8;
+  -fx-background-radius: 6;
+  -fx-padding: 8 16 8 16;
+}
+
+.button:hover {
+  -fx-background-color: #5d5073;
+}
+
+.button:disabled {
+  -fx-opacity: 0.45;
+}
+
+.paradiso {
+  -fx-background-color: #3f6b4f;
+}
+
+.paradiso:hover {
+  -fx-background-color: #4f8763;
+}
+
+.purgatorio {
+  -fx-background-color: #806436;
+}
+
+.purgatorio:hover {
+  -fx-background-color: #9a7a44;
+}
+
+.limbo {
+  -fx-background-color: #5a5a6e;
+}
+
+.limbo:hover {
+  -fx-background-color: #6e6e86;
+}
+
+.inferno {
+  -fx-background-color: #7a2e2e;
+}
+
+.inferno:hover {
+  -fx-background-color: #963a3a;
+}
+
+.pericolo {
+  -fx-background-color: #8a4a21;
+}
+
+.pericolo:hover {
+  -fx-background-color: #a85c2a;
+}
+
+.text-area {
+  -fx-control-inner-background: #1d1924;
+  -fx-text-fill: #e6dcc8;
+  -fx-background-color: #1d1924;
+  -fx-background-radius: 6;
+}
+
+.text-area .content {
+  -fx-background-color: #1d1924;
+}
+
+.text-field {
+  -fx-background-color: #1d1924;
+  -fx-text-fill: #e6dcc8;
+  -fx-prompt-text-fill: #6f6657;
+  -fx-background-radius: 6;
+}
+
+.list-view {
+  -fx-control-inner-background: #1d1924;
+  -fx-background-color: #1d1924;
+  -fx-background-radius: 6;
+}
+
+.list-cell {
+  -fx-background-color: transparent;
+  -fx-text-fill: #d8cdb8;
+}
+
+.list-cell:selected {
+  -fx-background-color: #4a3f5c;
+  -fx-text-fill: #ffffff;
+}
+
+.combo-box {
+  -fx-background-color: #4a3f5c;
+}
+
+.combo-box .list-cell {
+  -fx-text-fill: #f0e9d8;
+}
