@@ -27,7 +27,7 @@ java {
 }
 
 application {
-    mainClass = "it.unicam.cs.mpgc.rpg126114.App"
+    mainClass = "it.unicam.cs.mpgc.rpg126114.gui.PraticheInfernaliApp"
 }
 
 tasks.test {
