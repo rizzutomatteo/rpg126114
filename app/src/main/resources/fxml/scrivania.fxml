@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="schermata"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.unicam.cs.mpgc.rpg126114.gui.controller.ScrivaniaController">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="24" styleClass="barra-stato">
+            <padding>
+                <Insets bottom="10" left="14" right="14" top="10"/>
+            </padding>
+            <Label fx:id="lblGiornata" styleClass="intestazione"/>
+            <Label fx:id="lblKarma"/>
+            <Label fx:id="lblLivello"/>
+            <Label fx:id="lblRimanenti"/>
+            <Label fx:id="lblColloqui"/>
+        </HBox>
+    </top>
+    <left>
+        <VBox prefWidth="380" spacing="8" styleClass="pannello">
+            <padding>
+                <Insets bottom="12" left="14" right="8" top="12"/>
+            </padding>
+            <Label styleClass="intestazione" text="Documenti del fascicolo"/>
+            <ListView fx:id="listaDocumenti" prefHeight="190"/>
+            <Label styleClass="intestazione" text="Contenuto del documento"/>
+            <TextArea fx:id="areaDocumento" editable="false" wrapText="true" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </left>
+    <center>
+        <VBox spacing="8" styleClass="pannello">
+            <padding>
+                <Insets bottom="12" left="8" right="14" top="12"/>
+            </padding>
+            <Label styleClass="intestazione" text="Allo sportello"/>
+            <TextArea fx:id="areaColloquio" editable="false" wrapText="true" VBox.vgrow="ALWAYS"/>
+            <HBox spacing="10">
+                <Button fx:id="btnColloquio" onAction="#onColloquio" text="Concedi colloquio"/>
+                <Button onAction="#onDenuncia" styleClass="pericolo" text="Denuncia impostore"/>
+            </HBox>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="barra-verdetti">
+            <padding>
+                <Insets bottom="12" left="14" right="14" top="12"/>
+            </padding>
+            <Label text="Timbro:"/>
+            <ComboBox fx:id="comboTimbro" prefWidth="200"/>
+            <Label text="Verdetto:"/>
+            <Button onAction="#onParadiso" styleClass="paradiso" text="Paradiso"/>
+            <Button onAction="#onPurgatorio" styleClass="purgatorio" text="Purgatorio"/>
+            <Button onAction="#onLimbo" styleClass="limbo" text="Limbo"/>
+            <Button onAction="#onInferno" styleClass="inferno" text="Inferno"/>
+        </HBox>
+    </bottom>
+</BorderPane>
