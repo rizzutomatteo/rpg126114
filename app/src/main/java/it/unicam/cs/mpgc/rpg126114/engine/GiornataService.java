@@ -18,14 +18,19 @@ import it.unicam.cs.mpgc.rpg126114.model.verdetti.Verdetto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * L'orchestratore di una giornata allo sportello: apre la giornata con il
- * regolamento progressivo, distribuisce le pratiche, raccoglie verdetti,
- * colloqui e denunce, e a fine turno produce il {@link ReportGiornata}.
+ * regolamento progressivo, mette in coda gli arrivi su un thread dedicato,
+ * raccoglie verdetti, colloqui e denunce, e a fine turno produce il
+ * {@link ReportGiornata}.
  *
  * <p>Dipende solo dalle astrazioni del model e dai collaboratori iniettati
- * nel costruttore: la GUI vi accede senza conoscere le regole concrete.</p>
+ * nel costruttore: la GUI vi accede senza conoscere le regole concrete.
+ * Gli arrivi sono consegnati dalla {@link CodaArrivi} mentre il giocatore
+ * lavora: {@link #prossimaPratica()} restituisce vuoto finche' nessuna
+ * anima e' in attesa.</p>
  */
 public class GiornataService {
 
@@ -42,6 +47,7 @@ public class GiornataService {
     private final GeneratoreAnime generatoreAnime;
     private final GeneratoreFascicoli generatoreFascicoli;
     private final ValutatoreVerdetti valutatore;
+    private final CodaArrivi codaArrivi;
 
     private Giornata giornata;
     private Fascicolo fascicoloCorrente;
@@ -49,24 +55,41 @@ public class GiornataService {
     private int karmaExtraDelGiorno;
     private int colloquiRimasti;
     private int dichiarazioniRese;
+    private long intervalloArriviMillis = CodaArrivi.INTERVALLO_PREDEFINITO_MILLIS;
 
     /**
      * @param partita             lo stato della carriera, non null
      * @param generatoreAnime     il distributore di anime, non null
      * @param generatoreFascicoli il compositore di fascicoli, non null
      * @param valutatore          il valutatore dei verdetti, non null
+     * @param codaArrivi          la coda concorrente degli arrivi, non null
      * @throws IllegalArgumentException se un collaboratore e' null
      */
     public GiornataService(Partita partita, GeneratoreAnime generatoreAnime,
-                           GeneratoreFascicoli generatoreFascicoli, ValutatoreVerdetti valutatore) {
-        if (partita == null || generatoreAnime == null
-                || generatoreFascicoli == null || valutatore == null) {
+                           GeneratoreFascicoli generatoreFascicoli, ValutatoreVerdetti valutatore,
+                           CodaArrivi codaArrivi) {
+        if (partita == null || generatoreAnime == null || generatoreFascicoli == null
+                || valutatore == null || codaArrivi == null) {
             throw new IllegalArgumentException("Tutti i collaboratori del servizio sono obbligatori");
         }
         this.partita = partita;
         this.generatoreAnime = generatoreAnime;
         this.generatoreFascicoli = generatoreFascicoli;
         this.valutatore = valutatore;
+        this.codaArrivi = codaArrivi;
+    }
+
+    /**
+     * Regola il ritmo degli arrivi allo sportello (utile nei test).
+     *
+     * @param millis attesa tra un arrivo e il successivo, non negativa
+     * @throws IllegalArgumentException se l'intervallo e' negativo
+     */
+    public void setIntervalloArrivi(long millis) {
+        if (millis < 0) {
+            throw new IllegalArgumentException("Intervallo negativo: " + millis);
+        }
+        this.intervalloArriviMillis = millis;
     }
 
     /**
@@ -91,6 +114,8 @@ public class GiornataService {
         karmaExtraDelGiorno = 0;
         colloquiRimasti = partita.getFunzionario().colloquiPerGiornata();
         fascicoloCorrente = null;
+        codaArrivi.avvia(generatoreAnime.prossime(previste, partita.getArchivio()),
+                intervalloArriviMillis);
         return true;
     }
 
@@ -120,13 +145,15 @@ public class GiornataService {
     }
 
     /**
-     * Chiama la prossima anima allo sportello e ne compone il fascicolo.
+     * Chiama allo sportello la prossima anima arrivata in coda e ne
+     * compone il fascicolo.
      *
-     * @return il fascicolo della nuova pratica
+     * @return il fascicolo della nuova pratica, o vuoto se nessuna anima
+     *         e' ancora arrivata
      * @throws IllegalStateException se c'e' gia' una pratica aperta o la
      *                               giornata e' conclusa o non avviata
      */
-    public Fascicolo prossimaPratica() {
+    public Optional<Fascicolo> prossimaPratica() {
         richiediGiornataAttiva();
         if (fascicoloCorrente != null) {
             throw new IllegalStateException("C'e' gia' una pratica aperta sulla scrivania");
@@ -134,10 +161,31 @@ public class GiornataService {
         if (giornata.isConclusa()) {
             throw new IllegalStateException("La giornata e' conclusa: nessuna nuova pratica");
         }
-        Anima anima = generatoreAnime.prossima(partita.getArchivio());
-        fascicoloCorrente = generatoreFascicoli.componi(anima);
+        Optional<Anima> arrivata = codaArrivi.preleva();
+        if (arrivata.isEmpty()) {
+            return Optional.empty();
+        }
+        fascicoloCorrente = generatoreFascicoli.componi(arrivata.get());
         dichiarazioniRese = 0;
-        return fascicoloCorrente;
+        return Optional.of(fascicoloCorrente);
+    }
+
+    /**
+     * @return quante anime aspettano in coda allo sportello
+     */
+    public int arriviInAttesa() {
+        return codaArrivi.inAttesa();
+    }
+
+    /**
+     * Registra chi viene avvisato a ogni nuovo arrivo. L'avviso parte dal
+     * thread produttore della coda: la GUI deve rientrare nel thread
+     * JavaFX con {@code Platform.runLater}.
+     *
+     * @param osservatore il destinatario degli avvisi, o null per nessuno
+     */
+    public void setOsservatoreArrivi(Consumer<Integer> osservatore) {
+        codaArrivi.setOsservatoreArrivi(osservatore);
     }
 
     /**
@@ -247,6 +295,7 @@ public class GiornataService {
         if (!giornata.isConclusa()) {
             throw new IllegalStateException("Ci sono ancora casi aperti allo sportello");
         }
+        codaArrivi.ferma();
         ReportGiornata report = new ReportGiornata(giornata.getNumero(),
                 giornata.getVerdettiDelGiorno(), esitiDelGiorno,
                 giornata.getCasiSenzaVerdetto(), karmaExtraDelGiorno);
