@@ -8,6 +8,7 @@ import it.unicam.cs.mpgc.rpg126114.model.documenti.Documento;
 import it.unicam.cs.mpgc.rpg126114.model.documenti.Fascicolo;
 import it.unicam.cs.mpgc.rpg126114.model.verdetti.Destinazione;
 import it.unicam.cs.mpgc.rpg126114.model.verdetti.Timbro;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -24,9 +25,12 @@ import java.util.Optional;
  * Funzionario esamina il fascicolo, concede colloqui, denuncia gli
  * impostori ed emette i verdetti.
  *
- * <p>Il controller non contiene logica di gioco: traduce gli eventi
- * dell'interfaccia in chiamate al {@link GiornataService} e ne mostra
- * i risultati.</p>
+ * <p>Le anime arrivano in coda da un thread produttore mentre il
+ * giocatore lavora: l'avviso di arrivo rientra nel thread JavaFX con
+ * {@code Platform.runLater}, come richiesto dalla regola del singolo
+ * thread per la modifica dei nodi. Il controller non contiene logica di
+ * gioco: traduce gli eventi dell'interfaccia in chiamate al
+ * {@link GiornataService} e ne mostra i risultati.</p>
  */
 public class ScrivaniaController {
 
@@ -42,6 +46,8 @@ public class ScrivaniaController {
     @FXML
     private Label lblRimanenti;
     @FXML
+    private Label lblCoda;
+    @FXML
     private Label lblColloqui;
     @FXML
     private ListView<String> listaDocumenti;
@@ -53,6 +59,16 @@ public class ScrivaniaController {
     private ComboBox<Timbro> comboTimbro;
     @FXML
     private Button btnColloquio;
+    @FXML
+    private Button btnDenuncia;
+    @FXML
+    private Button btnParadiso;
+    @FXML
+    private Button btnPurgatorio;
+    @FXML
+    private Button btnLimbo;
+    @FXML
+    private Button btnInferno;
 
     public ScrivaniaController(ContestoGioco contesto, SceneRouter router) {
         this.contesto = contesto;
@@ -76,6 +92,7 @@ public class ScrivaniaController {
                 .addListener((osservato, vecchio, nuovo) -> mostraDocumento(nuovo.intValue()));
 
         GiornataService servizio = contesto.getServizio();
+        servizio.setOsservatoreArrivi(inAttesa -> Platform.runLater(this::onArrivo));
         if (servizio.getGiornata() == null) {
             if (!servizio.avviaGiornata()) {
                 mostraMessaggio(Alert.AlertType.INFORMATION, "Pensionamento con onore",
@@ -86,10 +103,37 @@ public class ScrivaniaController {
                 return;
             }
         }
-        if (servizio.getFascicoloCorrente() == null && !servizio.isGiornataConclusa()) {
-            servizio.prossimaPratica();
+        tentaProssimaPratica();
+    }
+
+    private void onArrivo() {
+        aggiornaBarraDiStato();
+        if (contesto.getServizio().getFascicoloCorrente() == null) {
+            tentaProssimaPratica();
         }
-        aggiorna();
+    }
+
+    private void tentaProssimaPratica() {
+        GiornataService servizio = contesto.getServizio();
+        if (servizio.getGiornata() == null || servizio.isGiornataConclusa()) {
+            return;
+        }
+        if (servizio.getFascicoloCorrente() == null) {
+            Optional<Fascicolo> pratica = servizio.prossimaPratica();
+            if (pratica.isEmpty()) {
+                modalitaAttesa();
+                return;
+            }
+        }
+        mostraPratica();
+    }
+
+    private void modalitaAttesa() {
+        areaColloquio.setText("Lo sportello e' vuoto.\n\nIn attesa del prossimo arrivo...");
+        listaDocumenti.getItems().clear();
+        areaDocumento.clear();
+        abilitaAzioni(false);
+        aggiornaBarraDiStato();
     }
 
     @FXML
@@ -169,8 +213,7 @@ public class ScrivaniaController {
             router.vai("report");
             return;
         }
-        servizio.prossimaPratica();
-        aggiorna();
+        tentaProssimaPratica();
     }
 
     private void mostraEsito(Destinazione scelta, EsitoValutazione esito) {
@@ -194,7 +237,7 @@ public class ScrivaniaController {
         finestra.showAndWait();
     }
 
-    private void aggiorna() {
+    private void mostraPratica() {
         Fascicolo fascicolo = contesto.getServizio().getFascicoloCorrente();
         if (fascicolo == null) {
             return;
@@ -207,7 +250,18 @@ public class ScrivaniaController {
         comboTimbro.getItems().setAll(
                 contesto.getPartita().getFunzionario().timbriDisponibili());
         comboTimbro.getSelectionModel().selectFirst();
+        abilitaAzioni(true);
         aggiornaBarraDiStato();
+    }
+
+    private void abilitaAzioni(boolean praticaAperta) {
+        btnDenuncia.setDisable(!praticaAperta);
+        btnParadiso.setDisable(!praticaAperta);
+        btnPurgatorio.setDisable(!praticaAperta);
+        btnLimbo.setDisable(!praticaAperta);
+        btnInferno.setDisable(!praticaAperta);
+        btnColloquio.setDisable(!praticaAperta
+                || contesto.getServizio().getColloquiRimasti() <= 0);
     }
 
     private String etichettaDocumento(Documento documento) {
@@ -227,12 +281,18 @@ public class ScrivaniaController {
 
     private void aggiornaBarraDiStato() {
         GiornataService servizio = contesto.getServizio();
+        if (servizio.getGiornata() == null) {
+            return;
+        }
         lblGiornata.setText("Giornata " + servizio.getGiornata().getNumero());
         lblKarma.setText("Karma: " + contesto.getPartita().getFunzionario().getKarma());
         lblLivello.setText("Livello: " + contesto.getPartita().getFunzionario().getLivello());
-        lblRimanenti.setText("In attesa: " + servizio.getGiornata().animeRimanenti());
+        lblRimanenti.setText("Casi da chiudere: " + servizio.getGiornata().animeRimanenti());
+        lblCoda.setText("In coda: " + servizio.arriviInAttesa());
         lblColloqui.setText("Colloqui: " + servizio.getColloquiRimasti());
-        btnColloquio.setDisable(servizio.getColloquiRimasti() <= 0);
+        if (servizio.getFascicoloCorrente() != null) {
+            btnColloquio.setDisable(servizio.getColloquiRimasti() <= 0);
+        }
     }
 
     private void mostraMessaggio(Alert.AlertType tipo, String intestazione, String testo) {

@@ -22,6 +22,7 @@
             <Label fx:id="lblKarma"/>
             <Label fx:id="lblLivello"/>
             <Label fx:id="lblRimanenti"/>
+            <Label fx:id="lblCoda"/>
             <Label fx:id="lblColloqui"/>
         </HBox>
     </top>
@@ -45,7 +46,8 @@
             <TextArea fx:id="areaColloquio" editable="false" wrapText="true" VBox.vgrow="ALWAYS"/>
             <HBox spacing="10">
                 <Button fx:id="btnColloquio" onAction="#onColloquio" text="Concedi colloquio"/>
-                <Button onAction="#onDenuncia" styleClass="pericolo" text="Denuncia impostore"/>
+                <Button fx:id="btnDenuncia" onAction="#onDenuncia" styleClass="pericolo"
+                        text="Denuncia impostore"/>
             </HBox>
         </VBox>
     </center>
@@ -57,10 +59,10 @@
             <Label text="Timbro:"/>
             <ComboBox fx:id="comboTimbro" prefWidth="200"/>
             <Label text="Verdetto:"/>
-            <Button onAction="#onParadiso" styleClass="paradiso" text="Paradiso"/>
-            <Button onAction="#onPurgatorio" styleClass="purgatorio" text="Purgatorio"/>
-            <Button onAction="#onLimbo" styleClass="limbo" text="Limbo"/>
-            <Button onAction="#onInferno" styleClass="inferno" text="Inferno"/>
+            <Button fx:id="btnParadiso" onAction="#onParadiso" styleClass="paradiso" text="Paradiso"/>
+            <Button fx:id="btnPurgatorio" onAction="#onPurgatorio" styleClass="purgatorio" text="Purgatorio"/>
+            <Button fx:id="btnLimbo" onAction="#onLimbo" styleClass="limbo" text="Limbo"/>
+            <Button fx:id="btnInferno" onAction="#onInferno" styleClass="inferno" text="Inferno"/>
         </HBox>
     </bottom>
 </BorderPane>
