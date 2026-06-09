@@ -23,7 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Verifica il flusso completo di una giornata allo sportello.
+ * Verifica il flusso completo di una giornata allo sportello, arrivi
+ * concorrenti compresi.
  */
 class GiornataServiceTest {
 
@@ -41,10 +42,28 @@ class GiornataServiceTest {
 
     private GiornataService servizioCon(List<Anima> pool, int probabilitaImpostore) {
         Partita partita = new Partita(new Funzionario("Funzionario di Prova"));
-        return new GiornataService(partita,
+        GiornataService servizio = new GiornataService(partita,
                 new GeneratoreAnime(pool, new Random(7), probabilitaImpostore),
                 new GeneratoreFascicoli(new Random(7)),
-                new ValutatoreVerdetti());
+                new ValutatoreVerdetti(),
+                new CodaArrivi());
+        servizio.setIntervalloArrivi(0);
+        return servizio;
+    }
+
+    /**
+     * Gli arrivi sono asincroni: attende che la coda consegni la
+     * prossima anima allo sportello.
+     */
+    private Fascicolo attendiPratica(GiornataService servizio) throws InterruptedException {
+        for (int tentativi = 0; tentativi < 400; tentativi++) {
+            Optional<Fascicolo> pratica = servizio.prossimaPratica();
+            if (pratica.isPresent()) {
+                return pratica.get();
+            }
+            Thread.sleep(5);
+        }
+        throw new AssertionError("Nessuna anima arrivata allo sportello in tempo utile");
     }
 
     @Test
@@ -58,14 +77,14 @@ class GiornataServiceTest {
     }
 
     @Test
-    void unaGiornataCompletaProduceReportEAvanzamento() {
+    void unaGiornataCompletaProduceReportEAvanzamento() throws InterruptedException {
         GiornataService servizio = servizioCon(poolVirtuoso(3), 0);
 
         assertTrue(servizio.avviaGiornata());
         assertEquals(3, servizio.getGiornata().getAnimePreviste());
 
         while (!servizio.isGiornataConclusa()) {
-            Fascicolo fascicolo = servizio.prossimaPratica();
+            Fascicolo fascicolo = attendiPratica(servizio);
             assertNotNull(fascicolo);
             EsitoValutazione esito =
                     servizio.emettiVerdetto(Destinazione.PARADISO, Timbro.ORDINANZA);
@@ -81,10 +100,10 @@ class GiornataServiceTest {
     }
 
     @Test
-    void unVerdettoSbagliatoCostaKarma() {
+    void unVerdettoSbagliatoCostaKarma() throws InterruptedException {
         GiornataService servizio = servizioCon(poolVirtuoso(3), 0);
         servizio.avviaGiornata();
-        servizio.prossimaPratica();
+        attendiPratica(servizio);
 
         EsitoValutazione esito = servizio.emettiVerdetto(Destinazione.INFERNO, Timbro.ORDINANZA);
 
@@ -94,10 +113,10 @@ class GiornataServiceTest {
     }
 
     @Test
-    void laDenunciaInfondataCostaELaPraticaRestaAperta() {
+    void laDenunciaInfondataCostaELaPraticaRestaAperta() throws InterruptedException {
         GiornataService servizio = servizioCon(poolVirtuoso(3), 0);
         servizio.avviaGiornata();
-        servizio.prossimaPratica();
+        attendiPratica(servizio);
 
         assertFalse(servizio.denunciaImpostore());
         assertEquals(GiornataService.PENALE_DENUNCIA_ERRATA,
@@ -106,14 +125,14 @@ class GiornataServiceTest {
     }
 
     @Test
-    void lImpostoreDenunciatoFruttaKarma() {
+    void lImpostoreDenunciatoFruttaKarma() throws InterruptedException {
         GiornataService servizio = servizioCon(poolVirtuoso(3), 100);
         Anima giaGiudicata = new AnimaComune("Anima Virtuosa 1", 1901);
         servizio.getPartita().getArchivio().registra(
                 new Verdetto(giaGiudicata, Destinazione.PARADISO, Timbro.ORDINANZA, 1));
 
         servizio.avviaGiornata();
-        servizio.prossimaPratica();
+        attendiPratica(servizio);
 
         assertTrue(servizio.denunciaImpostore());
         assertEquals(GiornataService.KARMA_DENUNCIA_CORRETTA,
@@ -122,14 +141,14 @@ class GiornataServiceTest {
     }
 
     @Test
-    void lImpostoreGiudicatoVieneRespintoDallArchivio() {
+    void lImpostoreGiudicatoVieneRespintoDallArchivio() throws InterruptedException {
         GiornataService servizio = servizioCon(poolVirtuoso(3), 100);
         Anima giaGiudicata = new AnimaComune("Anima Virtuosa 1", 1901);
         servizio.getPartita().getArchivio().registra(
                 new Verdetto(giaGiudicata, Destinazione.PARADISO, Timbro.ORDINANZA, 1));
 
         servizio.avviaGiornata();
-        servizio.prossimaPratica();
+        attendiPratica(servizio);
         EsitoValutazione esito = servizio.emettiVerdetto(Destinazione.PARADISO, Timbro.ORDINANZA);
 
         assertFalse(esito.isCorretto());
@@ -139,20 +158,20 @@ class GiornataServiceTest {
     }
 
     @Test
-    void unTimbroNonSbloccatoVieneRifiutato() {
+    void unTimbroNonSbloccatoVieneRifiutato() throws InterruptedException {
         GiornataService servizio = servizioCon(poolVirtuoso(3), 0);
         servizio.avviaGiornata();
-        servizio.prossimaPratica();
+        attendiPratica(servizio);
 
         assertThrows(IllegalArgumentException.class,
                 () -> servizio.emettiVerdetto(Destinazione.PARADISO, Timbro.DORATO));
     }
 
     @Test
-    void iColloquiSonoLimitatiDallaPazienza() {
+    void iColloquiSonoLimitatiDallaPazienza() throws InterruptedException {
         GiornataService servizio = servizioCon(poolVirtuoso(3), 0);
         servizio.avviaGiornata();
-        servizio.prossimaPratica();
+        attendiPratica(servizio);
 
         Optional<String> primo = servizio.colloquio();
         Optional<String> secondo = servizio.colloquio();
@@ -173,7 +192,7 @@ class GiornataServiceTest {
     }
 
     @Test
-    void leOperazioniFuoriSequenzaSonoRifiutate() {
+    void leOperazioniFuoriSequenzaSonoRifiutate() throws InterruptedException {
         GiornataService servizio = servizioCon(poolVirtuoso(3), 0);
 
         assertThrows(IllegalStateException.class, servizio::prossimaPratica);
@@ -183,7 +202,17 @@ class GiornataServiceTest {
         servizio.avviaGiornata();
         assertThrows(IllegalStateException.class, servizio::chiudiGiornata);
 
-        servizio.prossimaPratica();
+        attendiPratica(servizio);
         assertThrows(IllegalStateException.class, servizio::prossimaPratica);
+    }
+
+    @Test
+    void gliArriviInAttesaSonoVisibili() throws InterruptedException {
+        GiornataService servizio = servizioCon(poolVirtuoso(3), 0);
+        servizio.avviaGiornata();
+
+        attendiPratica(servizio);
+
+        assertTrue(servizio.arriviInAttesa() >= 0);
     }
 }

@@ -8,8 +8,10 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Distribuisce le anime allo sportello pescando da un pool mescolato.
@@ -74,6 +76,37 @@ public class GeneratoreAnime {
             return giudicate.get(random.nextInt(giudicate.size())).getAnima();
         }
         return pescaFresca(archivio);
+    }
+
+    /**
+     * Prepara in anticipo il lotto degli arrivi di una giornata, evitando
+     * doppioni nello stesso lotto. Generare tutto prima di avviare il
+     * thread della coda elimina la condivisione di stato mutabile tra i
+     * thread.
+     *
+     * @param quante   il numero di arrivi richiesti, almeno 1
+     * @param archivio l'archivio delle anime gia' giudicate
+     * @return il lotto degli arrivi, nell'ordine di consegna
+     * @throws IllegalArgumentException se quante non e' positivo
+     * @throws IllegalStateException    se le anime fresche non bastano
+     */
+    public List<Anima> prossime(int quante, ArchivioAnime archivio) {
+        if (quante < 1) {
+            throw new IllegalArgumentException("Il lotto deve contenere almeno un arrivo");
+        }
+        List<Anima> lotto = new ArrayList<>();
+        Set<Anima> giaNelLotto = new HashSet<>();
+        for (int i = 0; i < quante; i++) {
+            Anima candidata = prossima(archivio);
+            int tentativi = 0;
+            while (giaNelLotto.contains(candidata) && tentativi < 20) {
+                candidata = prossima(archivio);
+                tentativi++;
+            }
+            giaNelLotto.add(candidata);
+            lotto.add(candidata);
+        }
+        return lotto;
     }
 
     private Anima pescaFresca(ArchivioAnime archivio) {
