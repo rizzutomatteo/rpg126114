@@ -15,8 +15,11 @@
     <Label styleClass="titolo" text="PRATICHE INFERNALI"/>
     <Label styleClass="sottotitolo"
            text="Ufficio Smistamento Anime - Sportello Unico del Purgatorio"/>
-    <TextField fx:id="campoNome" maxWidth="320" promptText="Nome del Funzionario"/>
+    <TextField fx:id="campoNome" maxWidth="320"
+               promptText="Nome del Funzionario (vuoto: Funzionario Senzanome)"/>
     <Button defaultButton="true" onAction="#onNuovaPartita" prefWidth="220" text="Nuova carriera"/>
     <Button fx:id="btnCarica" onAction="#onCaricaPartita" prefWidth="220" text="Riprendi carriera"/>
+    <Label fx:id="lblSalvataggio" styleClass="sottotitolo"/>
+    <Button onAction="#onManuale" prefWidth="220" text="Manuale del Funzionario"/>
     <Button cancelButton="true" onAction="#onEsci" prefWidth="220" text="Esci"/>
 </VBox>

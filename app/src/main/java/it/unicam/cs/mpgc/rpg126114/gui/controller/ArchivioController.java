@@ -42,6 +42,10 @@ public class ArchivioController {
 
     @FXML
     private void onIndietro() {
+        if (contesto.getServizio().getGiornata() != null) {
+            router.vai("scrivania");
+            return;
+        }
         router.vai("report");
     }
 

@@ -9,11 +9,13 @@ import it.unicam.cs.mpgc.rpg126114.engine.ValutatoreVerdetti;
 import it.unicam.cs.mpgc.rpg126114.model.anima.Anima;
 import it.unicam.cs.mpgc.rpg126114.model.carriera.Funzionario;
 import it.unicam.cs.mpgc.rpg126114.model.carriera.Partita;
+import it.unicam.cs.mpgc.rpg126114.persistence.PersistenzaException;
 import it.unicam.cs.mpgc.rpg126114.persistence.RepositoryPartita;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -115,6 +117,31 @@ public class ContestoGioco {
 
     public boolean esisteSalvataggio() {
         return repository.esisteSalvataggio();
+    }
+
+    /**
+     * Una descrizione del salvataggio esistente, da mostrare nel menu
+     * prima di caricarlo.
+     *
+     * @return la descrizione, o vuoto se non c'e' alcun salvataggio
+     */
+    public Optional<String> descrizioneSalvataggio() {
+        if (!repository.esisteSalvataggio()) {
+            return Optional.empty();
+        }
+        try {
+            return repository.carica().map(Partita::toString);
+        } catch (PersistenzaException errore) {
+            return Optional.of("Salvataggio presente ma illeggibile.");
+        }
+    }
+
+    /**
+     * @return true se c'e' una giornata aperta, i cui progressi non sono
+     *         ancora stati salvati
+     */
+    public boolean isGiornataInCorso() {
+        return partita != null && servizio != null && servizio.getGiornata() != null;
     }
 
     /**

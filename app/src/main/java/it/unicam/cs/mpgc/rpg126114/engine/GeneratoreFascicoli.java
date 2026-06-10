@@ -23,7 +23,6 @@ public class GeneratoreFascicoli {
 
     private static final int PERCENTO_TESTAMENTO = 60;
     private static final int PERCENTO_TESTAMENTO_POSTUMO = 25;
-    private static final int PERCENTO_NOTAIO_FIDATO = 80;
     private static final int PERCENTO_CONFESSIONE = 60;
     private static final int PERCENTO_CONFESSA_CAPITALE = 60;
     private static final int PERCENTO_CONFESSA_VENIALE = 70;
@@ -90,7 +89,7 @@ public class GeneratoreFascicoli {
             annoRedazione = anima.getAnnoMorte() - random.nextInt(31);
         }
         String volonta = FRASI_TESTAMENTO[random.nextInt(FRASI_TESTAMENTO.length)];
-        return new Testamento(volonta, annoRedazione, chance(PERCENTO_NOTAIO_FIDATO));
+        return new Testamento(volonta, annoRedazione);
     }
 
     private Confessione componiConfessione(Anima anima) {

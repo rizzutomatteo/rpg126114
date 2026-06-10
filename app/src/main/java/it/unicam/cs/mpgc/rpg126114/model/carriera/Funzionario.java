@@ -90,6 +90,13 @@ public class Funzionario {
     }
 
     /**
+     * @return la soglia di karma alla quale scatta la prossima promozione
+     */
+    public int sogliaProssimaPromozione() {
+        return livello * KARMA_PER_LIVELLO;
+    }
+
+    /**
      * Spende un punto abilita' per potenziare l'Intuito.
      *
      * @throws IllegalStateException se non ci sono punti abilita'

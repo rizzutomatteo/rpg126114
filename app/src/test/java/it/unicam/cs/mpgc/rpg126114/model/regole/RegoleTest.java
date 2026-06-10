@@ -75,7 +75,7 @@ class RegoleTest {
         Anima anima = new AnimaComune("Furbo Postumo", 1900);
         Fascicolo fascicolo = new Fascicolo(anima);
         fascicolo.aggiungi(new FedinaKarmica(List.of(), List.of()));
-        fascicolo.aggiungi(new Testamento("Lascio tutto a me stesso.", 1905, true));
+        fascicolo.aggiungi(new Testamento("Lascio tutto a me stesso.", 1905));
 
         Optional<Esito> esito = new RegolaContraddizioni().valuta(fascicolo);
 

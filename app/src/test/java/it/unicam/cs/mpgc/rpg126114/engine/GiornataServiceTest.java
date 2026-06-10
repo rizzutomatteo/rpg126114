@@ -194,6 +194,13 @@ class GiornataServiceTest {
     }
 
     @Test
+    void leAnimeRimasteNegliArchiviSonoConsultabili() {
+        GiornataService servizio = servizioCon(poolVirtuoso(3), 0);
+
+        assertEquals(3, servizio.animeFrescheRimaste());
+    }
+
+    @Test
     void aPoolEsauritoScattaIlPensionamento() {
         List<Anima> pool = poolVirtuoso(1);
         GiornataService servizio = servizioCon(pool, 0);

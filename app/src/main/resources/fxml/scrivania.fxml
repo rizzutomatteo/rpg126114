@@ -49,6 +49,7 @@
                 <Button fx:id="btnColloquio" onAction="#onColloquio" text="Concedi colloquio"/>
                 <Button fx:id="btnDenuncia" onAction="#onDenuncia" styleClass="pericolo"
                         text="Denuncia impostore"/>
+                <Button onAction="#onArchivio" text="Consulta archivio"/>
             </HBox>
         </VBox>
     </center>
