@@ -51,4 +51,10 @@ public class RegolaContraddizioni implements Regola {
     public String descrizione() {
         return "Regola delle Contraddizioni";
     }
+
+    @Override
+    public String spiegazione() {
+        return "Chi mente e' perduto: un testamento redatto dopo la morte o un "
+                + "peccato capitale taciuto in confessione condannano all'Inferno.";
+    }
 }

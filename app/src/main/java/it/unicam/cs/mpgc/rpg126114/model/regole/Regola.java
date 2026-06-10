@@ -30,4 +30,15 @@ public interface Regola {
     default String descrizione() {
         return getClass().getSimpleName();
     }
+
+    /**
+     * La spiegazione della regola in linguaggio da sportello, mostrata
+     * al giocatore nel pannello del regolamento: il Funzionario deve
+     * sempre sapere con quali criteri sta giudicando.
+     *
+     * @return la spiegazione per il giocatore
+     */
+    default String spiegazione() {
+        return descrizione();
+    }
 }

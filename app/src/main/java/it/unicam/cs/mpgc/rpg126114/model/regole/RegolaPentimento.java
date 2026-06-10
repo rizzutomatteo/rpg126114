@@ -38,4 +38,10 @@ public class RegolaPentimento implements Regola {
     public String descrizione() {
         return "Regola del Pentimento";
     }
+
+    @Override
+    public String spiegazione() {
+        return "Chi confessa qualcosa senza tacere alcun peccato capitale mostra "
+                + "pentimento sincero e merita la purificazione del Purgatorio.";
+    }
 }

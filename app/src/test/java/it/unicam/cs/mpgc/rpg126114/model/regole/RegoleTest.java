@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -156,6 +157,23 @@ class RegoleTest {
         fascicolo.aggiungi(new Confessione(List.of()));
 
         assertTrue(new RegolaPentimento().valuta(fascicolo).isEmpty());
+    }
+
+    @Test
+    void ogniRegolaSiSpiegaAlGiocatoreConISuoiParametri() {
+        List<Regola> regole = List.of(
+                new RegolaBilancioKarmico(5, -5),
+                new RegolaContraddizioni(),
+                new RegolaRaccomandazione(),
+                new RegolaAnzianita(1700),
+                new RegolaPentimento());
+
+        for (Regola regola : regole) {
+            assertFalse(regola.spiegazione().isBlank(),
+                    regola.descrizione() + " deve spiegarsi al giocatore");
+        }
+        assertTrue(new RegolaBilancioKarmico(5, -5).spiegazione().contains("5"));
+        assertTrue(new RegolaAnzianita(1700).spiegazione().contains("1700"));
     }
 
     @Test
