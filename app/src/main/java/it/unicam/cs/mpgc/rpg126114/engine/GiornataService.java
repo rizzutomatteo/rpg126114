@@ -42,6 +42,9 @@ public class GiornataService {
     public static final int SOGLIA_PARADISO = 5;
     public static final int SOGLIA_INFERNO = -5;
     public static final int ANNO_ANIME_ANTICHE = 1700;
+    public static final long PRIMO_ARRIVO_PREDEFINITO_MILLIS = 1500;
+    public static final long INTERVALLO_MINIMO_PREDEFINITO_MILLIS = 18000;
+    public static final long INTERVALLO_MASSIMO_PREDEFINITO_MILLIS = 32000;
 
     private final Partita partita;
     private final GeneratoreAnime generatoreAnime;
@@ -55,7 +58,9 @@ public class GiornataService {
     private int karmaExtraDelGiorno;
     private int colloquiRimasti;
     private int dichiarazioniRese;
-    private long intervalloArriviMillis = CodaArrivi.INTERVALLO_PREDEFINITO_MILLIS;
+    private long primoArrivoMillis = PRIMO_ARRIVO_PREDEFINITO_MILLIS;
+    private long intervalloMinimoMillis = INTERVALLO_MINIMO_PREDEFINITO_MILLIS;
+    private long intervalloMassimoMillis = INTERVALLO_MASSIMO_PREDEFINITO_MILLIS;
 
     /**
      * @param partita             lo stato della carriera, non null
@@ -80,16 +85,21 @@ public class GiornataService {
     }
 
     /**
-     * Regola il ritmo degli arrivi allo sportello (utile nei test).
+     * Regola il ritmo degli arrivi allo sportello (utile nei test e per
+     * future opzioni di difficolta').
      *
-     * @param millis attesa tra un arrivo e il successivo, non negativa
-     * @throws IllegalArgumentException se l'intervallo e' negativo
+     * @param primoMillis   attesa prima del primo arrivo, non negativa
+     * @param minimoMillis  attesa minima tra gli arrivi successivi
+     * @param massimoMillis attesa massima tra gli arrivi successivi
+     * @throws IllegalArgumentException se il ritmo non e' valido
      */
-    public void setIntervalloArrivi(long millis) {
-        if (millis < 0) {
-            throw new IllegalArgumentException("Intervallo negativo: " + millis);
+    public void setRitmoArrivi(long primoMillis, long minimoMillis, long massimoMillis) {
+        if (primoMillis < 0 || minimoMillis < 0 || massimoMillis < minimoMillis) {
+            throw new IllegalArgumentException("Ritmo degli arrivi non valido");
         }
-        this.intervalloArriviMillis = millis;
+        this.primoArrivoMillis = primoMillis;
+        this.intervalloMinimoMillis = minimoMillis;
+        this.intervalloMassimoMillis = massimoMillis;
     }
 
     /**
@@ -115,7 +125,7 @@ public class GiornataService {
         colloquiRimasti = partita.getFunzionario().colloquiPerGiornata();
         fascicoloCorrente = null;
         codaArrivi.avvia(generatoreAnime.prossime(previste, partita.getArchivio()),
-                intervalloArriviMillis);
+                primoArrivoMillis, intervalloMinimoMillis, intervalloMassimoMillis);
         return true;
     }
 
@@ -142,6 +152,40 @@ public class GiornataService {
             regole.add(new RegolaPentimento());
         }
         return new Regolamento(regole);
+    }
+
+    /**
+     * La regola che entra in vigore nella giornata indicata: per la prima
+     * giornata e' la regola di base, per le successive l'eventuale regola
+     * aggiunta rispetto al giorno prima. Alimenta le "circolari di
+     * servizio" mostrate al giocatore.
+     *
+     * @param numero il numero della giornata, almeno 1
+     * @return la regola introdotta quel giorno, se ce n'e' una
+     * @throws IllegalArgumentException se il numero non e' valido
+     */
+    public Optional<Regola> nuovaRegolaPer(int numero) {
+        if (numero < 1) {
+            throw new IllegalArgumentException("Numero di giornata non valido: " + numero);
+        }
+        List<Regola> regoleDiOggi = regolamentoPerGiornata(numero).getRegole();
+        if (numero == 1) {
+            return Optional.of(regoleDiOggi.get(regoleDiOggi.size() - 1));
+        }
+        List<Regola> regoleDiIeri = regolamentoPerGiornata(numero - 1).getRegole();
+        if (regoleDiOggi.size() > regoleDiIeri.size()) {
+            return Optional.of(regoleDiOggi.get(regoleDiOggi.size() - 1));
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * @return la regola entrata in vigore oggi, se la giornata ne introduce una
+     * @throws IllegalStateException se nessuna giornata e' avviata
+     */
+    public Optional<Regola> nuovaRegolaDelGiorno() {
+        richiediGiornataAttiva();
+        return nuovaRegolaPer(giornata.getNumero());
     }
 
     /**

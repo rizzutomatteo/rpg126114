@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -98,6 +99,20 @@ class CodaArriviTest {
         List<Anima> raccolte = prelevaTutte(coda, 2, 2000);
 
         assertEquals(2, raccolte.size());
+    }
+
+    @Test
+    void ilPrimoArrivoERapidoEISuccessiviRispettanoIlRitmo() throws InterruptedException {
+        CodaArrivi coda = new CodaArrivi(new Random(42));
+        coda.avvia(lottoDi(3), 1, 60000, 60000);
+
+        List<Anima> primi = prelevaTutte(coda, 1, 2000);
+
+        assertEquals(1, primi.size());
+        Thread.sleep(200);
+        assertTrue(coda.preleva().isEmpty(),
+                "Il secondo arrivo deve attendere l'intervallo lungo");
+        coda.ferma();
     }
 
     @Test

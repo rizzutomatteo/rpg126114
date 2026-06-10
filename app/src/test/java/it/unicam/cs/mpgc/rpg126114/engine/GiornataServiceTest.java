@@ -47,7 +47,7 @@ class GiornataServiceTest {
                 new GeneratoreFascicoli(new Random(7)),
                 new ValutatoreVerdetti(),
                 new CodaArrivi());
-        servizio.setIntervalloArrivi(0);
+        servizio.setRitmoArrivi(0, 0, 0);
         return servizio;
     }
 
@@ -74,6 +74,18 @@ class GiornataServiceTest {
         assertEquals(2, servizio.regolamentoPerGiornata(2).getRegole().size());
         assertEquals(5, servizio.regolamentoPerGiornata(5).getRegole().size());
         assertEquals(5, servizio.regolamentoPerGiornata(9).getRegole().size());
+    }
+
+    @Test
+    void ogniGiornataAnnunciaLaSuaNuovaRegola() {
+        GiornataService servizio = servizioCon(poolVirtuoso(3), 0);
+
+        assertTrue(servizio.nuovaRegolaPer(1).isPresent());
+        assertEquals("Regola delle Contraddizioni",
+                servizio.nuovaRegolaPer(2).orElseThrow().descrizione());
+        assertTrue(servizio.nuovaRegolaPer(5).isPresent());
+        assertTrue(servizio.nuovaRegolaPer(6).isEmpty());
+        assertThrows(IllegalArgumentException.class, () -> servizio.nuovaRegolaPer(0));
     }
 
     @Test
