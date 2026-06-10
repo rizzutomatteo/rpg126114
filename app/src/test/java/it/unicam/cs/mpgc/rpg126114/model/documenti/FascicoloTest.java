@@ -3,6 +3,7 @@ package it.unicam.cs.mpgc.rpg126114.model.documenti;
 import it.unicam.cs.mpgc.rpg126114.model.anima.Anima;
 import it.unicam.cs.mpgc.rpg126114.model.anima.AnimaComune;
 import it.unicam.cs.mpgc.rpg126114.model.anima.Peccato;
+import it.unicam.cs.mpgc.rpg126114.model.anima.Virtu;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -35,7 +36,7 @@ class FascicoloTest {
     @Test
     void unFascicoloConFedinaEValido() {
         Fascicolo fascicolo = fascicoloDi("Guido Lanterna");
-        fascicolo.aggiungi(new FedinaKarmica(List.of()));
+        fascicolo.aggiungi(new FedinaKarmica(List.of(), List.of()));
 
         assertTrue(fascicolo.isCompleto());
         fascicolo.valida();
@@ -45,7 +46,7 @@ class FascicoloTest {
     void trovaRestituisceIlDocumentoDelTipoRichiesto() {
         Fascicolo fascicolo = fascicoloDi("Nora Vento");
         Testamento testamento = new Testamento("Ai posteri l'ardua sentenza.", 1820, true);
-        fascicolo.aggiungi(new FedinaKarmica(List.of()));
+        fascicolo.aggiungi(new FedinaKarmica(List.of(), List.of()));
         fascicolo.aggiungi(testamento);
 
         Optional<Testamento> trovato = fascicolo.trova(Testamento.class);
@@ -68,15 +69,31 @@ class FascicoloTest {
         Fascicolo fascicolo = fascicoloDi("Nora Vento");
 
         assertThrows(UnsupportedOperationException.class,
-                () -> fascicolo.getDocumenti().add(new FedinaKarmica(List.of())));
+                () -> fascicolo.getDocumenti().add(new FedinaKarmica(List.of(), List.of())));
     }
 
     @Test
     void laFedinaESempreAttendibile() {
-        FedinaKarmica fedina = new FedinaKarmica(List.of(new Peccato("Usura", 8)));
+        FedinaKarmica fedina = new FedinaKarmica(List.of(new Peccato("Usura", 8)), List.of());
 
         assertTrue(fedina.isAttendibile());
         assertTrue(fedina.contenuto().contains("Usura"));
+    }
+
+    @Test
+    void laFedinaRiportaVirtuPeccatiEBilancio() {
+        FedinaKarmica fedina = new FedinaKarmica(
+                List.of(new Peccato("Usura", 8)),
+                List.of(new Virtu("Elemosine domenicali", 3)));
+
+        assertTrue(fedina.contenuto().contains("Elemosine domenicali"));
+        assertTrue(fedina.contenuto().contains("Usura"));
+        assertEquals(-5, fedina.bilancio());
+        assertTrue(fedina.contenuto().contains("-5"));
+        assertThrows(IllegalArgumentException.class,
+                () -> new FedinaKarmica(null, List.of()));
+        assertThrows(IllegalArgumentException.class,
+                () -> new FedinaKarmica(List.of(), null));
     }
 
     @Test

@@ -27,7 +27,7 @@ class RegolamentoTest {
         anima.aggiungiVirtu(new Virtu("Gentilezza", 3));
         anima.aggiungiPeccato(new Peccato("Parcheggio in doppia fila", 2));
         Fascicolo fascicolo = new Fascicolo(anima);
-        fascicolo.aggiungi(new FedinaKarmica(anima.getPeccati()));
+        fascicolo.aggiungi(new FedinaKarmica(anima.getPeccati(), anima.getVirtu()));
         return fascicolo;
     }
 
