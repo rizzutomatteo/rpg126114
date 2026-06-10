@@ -33,7 +33,7 @@ class ValutatoreVerdettiTest {
         Anima anima = new AnimaComune("Santa Subito", 2000);
         anima.aggiungiVirtu(new Virtu("Carita' instancabile", 9));
         Fascicolo fascicolo = new Fascicolo(anima);
-        fascicolo.aggiungi(new FedinaKarmica(anima.getPeccati()));
+        fascicolo.aggiungi(new FedinaKarmica(anima.getPeccati(), anima.getVirtu()));
         return fascicolo;
     }
 

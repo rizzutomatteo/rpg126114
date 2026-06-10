@@ -34,7 +34,7 @@ class RegoleTest {
             anima.aggiungiPeccato(new Peccato("Colpa di prova", colpe));
         }
         Fascicolo fascicolo = new Fascicolo(anima);
-        fascicolo.aggiungi(new FedinaKarmica(anima.getPeccati()));
+        fascicolo.aggiungi(new FedinaKarmica(anima.getPeccati(), anima.getVirtu()));
         return fascicolo;
     }
 
@@ -74,7 +74,7 @@ class RegoleTest {
     void testamentoPostumoEUnaCondanna() {
         Anima anima = new AnimaComune("Furbo Postumo", 1900);
         Fascicolo fascicolo = new Fascicolo(anima);
-        fascicolo.aggiungi(new FedinaKarmica(List.of()));
+        fascicolo.aggiungi(new FedinaKarmica(List.of(), List.of()));
         fascicolo.aggiungi(new Testamento("Lascio tutto a me stesso.", 1905, true));
 
         Optional<Esito> esito = new RegolaContraddizioni().valuta(fascicolo);
@@ -88,7 +88,7 @@ class RegoleTest {
         Peccato capitale = new Peccato("Tradimento della patria", 9);
         anima.aggiungiPeccato(capitale);
         Fascicolo fascicolo = new Fascicolo(anima);
-        fascicolo.aggiungi(new FedinaKarmica(List.of(capitale)));
+        fascicolo.aggiungi(new FedinaKarmica(List.of(capitale), List.of()));
         fascicolo.aggiungi(new Confessione(List.of("Piccole bugie")));
 
         Optional<Esito> esito = new RegolaContraddizioni().valuta(fascicolo);
@@ -129,7 +129,7 @@ class RegoleTest {
     void leAnimeAntichePassanoAlLimbo() {
         Anima antica = new AnimaComune("Anima del Trecento", 1350);
         Fascicolo fascicolo = new Fascicolo(antica);
-        fascicolo.aggiungi(new FedinaKarmica(List.of()));
+        fascicolo.aggiungi(new FedinaKarmica(List.of(), List.of()));
 
         Optional<Esito> esito = new RegolaAnzianita(1500).valuta(fascicolo);
 
@@ -143,7 +143,7 @@ class RegoleTest {
         Peccato capitale = new Peccato("Avidita' senza freni", 8);
         anima.aggiungiPeccato(capitale);
         Fascicolo fascicolo = new Fascicolo(anima);
-        fascicolo.aggiungi(new FedinaKarmica(List.of(capitale)));
+        fascicolo.aggiungi(new FedinaKarmica(List.of(capitale), List.of()));
         fascicolo.aggiungi(new Confessione(List.of("Avidita' senza freni")));
 
         Optional<Esito> esito = new RegolaPentimento().valuta(fascicolo);

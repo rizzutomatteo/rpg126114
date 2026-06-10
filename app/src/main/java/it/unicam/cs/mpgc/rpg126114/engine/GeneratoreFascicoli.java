@@ -69,7 +69,7 @@ public class GeneratoreFascicoli {
      */
     public Fascicolo componi(Anima anima) {
         Fascicolo fascicolo = new Fascicolo(anima);
-        fascicolo.aggiungi(new FedinaKarmica(anima.getPeccati()));
+        fascicolo.aggiungi(new FedinaKarmica(anima.getPeccati(), anima.getVirtu()));
         if (chance(PERCENTO_TESTAMENTO)) {
             fascicolo.aggiungi(componiTestamento(anima));
         }
