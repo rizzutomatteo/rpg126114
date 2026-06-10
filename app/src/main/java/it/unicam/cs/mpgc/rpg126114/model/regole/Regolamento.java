@@ -78,7 +78,8 @@ public class Regolamento {
         fascicolo.valida();
         return regole.stream()
                 .map(regola -> regola.valuta(fascicolo)
-                        .map(esito -> regola.descrizione() + ": " + esito.getMotivazione()))
+                        .map(esito -> regola.descrizione() + " [peso " + esito.getPeso() + "]: "
+                                + esito.getMotivazione()))
                 .flatMap(Optional::stream)
                 .collect(Collectors.toList());
     }

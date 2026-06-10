@@ -82,6 +82,8 @@ class RegolamentoTest {
 
         assertEquals(1, motivazioni.size());
         assertTrue(motivazioni.get(0).startsWith("Regola del Bilancio Karmico"));
+        assertTrue(motivazioni.get(0).contains("[peso "),
+                "Le motivazioni devono riportare il peso dell'esito");
     }
 
     @Test

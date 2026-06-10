@@ -15,11 +15,15 @@ public class Confessione extends Documento {
     private final List<String> peccatiConfessati;
 
     /**
+     * La confessione e' resa di persona allo sportello: il documento e'
+     * autentico per definizione, ma il contenuto puo' tacere peccati
+     * che la fedina conosce.
+     *
      * @param peccatiConfessati descrizioni dei peccati ammessi, non null
      * @throws IllegalArgumentException se la lista e' null
      */
     public Confessione(List<String> peccatiConfessati) {
-        super("Confessione", false);
+        super("Confessione", true);
         if (peccatiConfessati == null) {
             throw new IllegalArgumentException("La lista dei peccati confessati non puo' essere null");
         }

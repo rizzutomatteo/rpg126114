@@ -55,6 +55,16 @@ class CarrieraTest {
     }
 
     @Test
+    void laSogliaDellaProssimaPromozioneEVisibile() {
+        Funzionario funzionario = new Funzionario("Astolfo Pratiche");
+
+        assertEquals(Funzionario.KARMA_PER_LIVELLO, funzionario.sogliaProssimaPromozione());
+
+        funzionario.aggiungiKarma(60);
+        assertEquals(2 * Funzionario.KARMA_PER_LIVELLO, funzionario.sogliaProssimaPromozione());
+    }
+
+    @Test
     void sottoLaSogliaScattaIlLicenziamento() {
         Funzionario funzionario = new Funzionario("Astolfo Pratiche");
 

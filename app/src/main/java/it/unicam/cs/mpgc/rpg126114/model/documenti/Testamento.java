@@ -11,13 +11,16 @@ public class Testamento extends Documento {
     private final int annoRedazione;
 
     /**
+     * Il documento in se' e' sempre autentico (depositato presso un
+     * notaio): a tradire l'anima puo' essere il contenuto, come un anno
+     * di redazione successivo alla morte.
+     *
      * @param volonta       testo delle ultime volonta', non vuoto
      * @param annoRedazione anno in cui il testamento risulta redatto
-     * @param attendibile   true se il notaio e' degno di fede
      * @throws IllegalArgumentException se il testo e' vuoto
      */
-    public Testamento(String volonta, int annoRedazione, boolean attendibile) {
-        super("Testamento", attendibile);
+    public Testamento(String volonta, int annoRedazione) {
+        super("Testamento", true);
         if (volonta == null || volonta.isBlank()) {
             throw new IllegalArgumentException("Le ultime volonta' non possono essere vuote");
         }

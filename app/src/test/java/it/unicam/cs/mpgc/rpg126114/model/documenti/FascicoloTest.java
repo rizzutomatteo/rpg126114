@@ -27,7 +27,7 @@ class FascicoloTest {
     @Test
     void unFascicoloSenzaFedinaNonVaAGiudizio() {
         Fascicolo fascicolo = fascicoloDi("Guido Lanterna");
-        fascicolo.aggiungi(new Testamento("Lascio tutto al gatto.", 1899, true));
+        fascicolo.aggiungi(new Testamento("Lascio tutto al gatto.", 1899));
 
         assertFalse(fascicolo.isCompleto());
         assertThrows(PraticaMalformataException.class, fascicolo::valida);
@@ -45,7 +45,7 @@ class FascicoloTest {
     @Test
     void trovaRestituisceIlDocumentoDelTipoRichiesto() {
         Fascicolo fascicolo = fascicoloDi("Nora Vento");
-        Testamento testamento = new Testamento("Ai posteri l'ardua sentenza.", 1820, true);
+        Testamento testamento = new Testamento("Ai posteri l'ardua sentenza.", 1820);
         fascicolo.aggiungi(new FedinaKarmica(List.of(), List.of()));
         fascicolo.aggiungi(testamento);
 
@@ -104,6 +104,13 @@ class FascicoloTest {
 
         assertTrue(confessione.omette(taciuto));
         assertFalse(confessione.omette(ammesso));
+    }
+
+    @Test
+    void soloLeLettereRichiedonoVerificaDellaFirma() {
+        assertTrue(new Testamento("Tutto ai posteri.", 1800).isAttendibile());
+        assertTrue(new Confessione(List.of()).isAttendibile());
+        assertFalse(new LetteraRaccomandazione("Firma Sospetta", 3, false).isAttendibile());
     }
 
     @Test

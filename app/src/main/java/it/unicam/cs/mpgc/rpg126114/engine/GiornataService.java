@@ -222,6 +222,13 @@ public class GiornataService {
     }
 
     /**
+     * @return quante anime restano negli archivi in attesa di giudizio
+     */
+    public int animeFrescheRimaste() {
+        return generatoreAnime.animeFresche(partita.getArchivio());
+    }
+
+    /**
      * Registra chi viene avvisato a ogni nuovo arrivo. L'avviso parte dal
      * thread produttore della coda: la GUI deve rientrare nel thread
      * JavaFX con {@code Platform.runLater}.
