@@ -4,6 +4,7 @@ import it.unicam.cs.mpgc.rpg126114.engine.EsitoValutazione;
 import it.unicam.cs.mpgc.rpg126114.engine.GiornataService;
 import it.unicam.cs.mpgc.rpg126114.gui.ContestoGioco;
 import it.unicam.cs.mpgc.rpg126114.gui.SceneRouter;
+import it.unicam.cs.mpgc.rpg126114.model.carriera.Funzionario;
 import it.unicam.cs.mpgc.rpg126114.model.documenti.Documento;
 import it.unicam.cs.mpgc.rpg126114.model.documenti.Fascicolo;
 import it.unicam.cs.mpgc.rpg126114.model.regole.Regola;
@@ -150,6 +151,20 @@ public class ScrivaniaController {
             testo.append("• ").append(timbro.getEtichetta())
                     .append(" (karma x").append(timbro.getMoltiplicatore()).append(")\n");
         }
+        testo.append("\nCOME SI DECIDE\n");
+        testo.append("Ogni regola applicabile vota una destinazione con un peso. ");
+        testo.append("Vince il peso totale piu' alto; a parita' prevale la ");
+        testo.append("destinazione piu' severa. Il timbro moltiplica il karma ");
+        testo.append("nel bene e nel male.\n");
+        testo.append("\nPROCEDURE D'UFFICIO\n");
+        testo.append("• Denuncia impostore: se l'anima risulta gia' giudicata, +")
+                .append(GiornataService.KARMA_DENUNCIA_CORRETTA)
+                .append(" karma; infondata ")
+                .append(GiornataService.PENALE_DENUNCIA_ERRATA).append(".\n");
+        testo.append("• Giudicare un impostore senza accorgersene: ")
+                .append(GiornataService.PENALE_IMPOSTORE_GIUDICATO)
+                .append(" e pratica respinta.\n");
+        testo.append("• Le anime erranti ricordano al piu' una dichiarazione.\n");
         areaRegolamento.setText(testo.toString());
     }
 
@@ -199,11 +214,13 @@ public class ScrivaniaController {
     @FXML
     private void onDenuncia() {
         GiornataService servizio = contesto.getServizio();
+        int livelloPrima = contesto.getPartita().getFunzionario().getLivello();
         boolean fondata = servizio.denunciaImpostore();
         if (fondata) {
             mostraMessaggio(Alert.AlertType.INFORMATION, "Impostore smascherato!",
                     "L'archivio conferma: quest'anima era gia' stata giudicata.\nKarma +"
                             + GiornataService.KARMA_DENUNCIA_CORRETTA);
+            notificaSePromosso(livelloPrima);
             dopoCasoChiuso();
         } else {
             mostraMessaggio(Alert.AlertType.WARNING, "Denuncia infondata",
@@ -238,9 +255,11 @@ public class ScrivaniaController {
             Timbro timbro = comboTimbro.getValue() == null
                     ? Timbro.ORDINANZA
                     : comboTimbro.getValue();
+            int livelloPrima = contesto.getPartita().getFunzionario().getLivello();
             EsitoValutazione esito =
                     contesto.getServizio().emettiVerdetto(destinazione, timbro);
             mostraEsito(destinazione, esito);
+            notificaSePromosso(livelloPrima);
             dopoCasoChiuso();
         } catch (IllegalStateException | IllegalArgumentException errore) {
             mostraMessaggio(Alert.AlertType.WARNING, "Operazione non consentita",
@@ -263,6 +282,34 @@ public class ScrivaniaController {
             return;
         }
         tentaProssimaPratica();
+    }
+
+    @FXML
+    private void onArchivio() {
+        router.vai("archivio");
+    }
+
+    /**
+     * Una promozione a meta' giornata merita un annuncio: livello, punti
+     * abilita' maturati ed eventuali timbri appena sbloccati.
+     */
+    private void notificaSePromosso(int livelloPrima) {
+        Funzionario funzionario = contesto.getPartita().getFunzionario();
+        if (funzionario.getLivello() <= livelloPrima) {
+            return;
+        }
+        StringBuilder testo = new StringBuilder("La Direzione si congratula: livello ")
+                .append(funzionario.getLivello())
+                .append(".\nPunti abilita' da spendere a fine giornata: ")
+                .append(funzionario.getPuntiAbilita()).append('.');
+        for (Timbro timbro : Timbro.values()) {
+            if (timbro.getLivelloRichiesto() > livelloPrima
+                    && timbro.getLivelloRichiesto() <= funzionario.getLivello()) {
+                testo.append("\nSbloccato: ").append(timbro.getEtichetta())
+                        .append(" (karma x").append(timbro.getMoltiplicatore()).append(')');
+            }
+        }
+        mostraMessaggio(Alert.AlertType.INFORMATION, "Promozione!", testo.toString());
     }
 
     private void mostraEsito(Destinazione scelta, EsitoValutazione esito) {
@@ -335,8 +382,17 @@ public class ScrivaniaController {
             return;
         }
         lblGiornata.setText("Giornata " + servizio.getGiornata().getNumero());
-        lblKarma.setText("Karma: " + contesto.getPartita().getFunzionario().getKarma());
-        lblLivello.setText("Livello: " + contesto.getPartita().getFunzionario().getLivello());
+        Funzionario funzionario = contesto.getPartita().getFunzionario();
+        StringBuilder karma = new StringBuilder("Karma: ").append(funzionario.getKarma())
+                .append(" (promozione a ").append(funzionario.sogliaProssimaPromozione());
+        if (funzionario.getKarma() < 0) {
+            karma.append(", licenziamento a ").append(Funzionario.SOGLIA_LICENZIAMENTO);
+        }
+        karma.append(')');
+        lblKarma.setText(karma.toString());
+        lblLivello.setText("Livello: " + funzionario.getLivello()
+                + " (Intuito " + funzionario.getIntuito()
+                + ", Pazienza " + funzionario.getPazienza() + ")");
         lblRimanenti.setText("Casi da chiudere: " + servizio.getGiornata().animeRimanenti());
         lblCoda.setText("In coda: " + servizio.arriviInAttesa());
         lblColloqui.setText("Colloqui: " + servizio.getColloquiRimasti());

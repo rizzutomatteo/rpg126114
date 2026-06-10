@@ -4,6 +4,8 @@ import it.unicam.cs.mpgc.rpg126114.persistence.CaricatorePool;
 import it.unicam.cs.mpgc.rpg126114.persistence.GsonRepositoryPartita;
 import it.unicam.cs.mpgc.rpg126114.persistence.RepositoryPartita;
 import javafx.application.Application;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 /**
@@ -24,6 +26,18 @@ public class PraticheInfernaliApp extends Application {
         SceneRouter router = new SceneRouter(stage, contesto);
 
         stage.setTitle("Pratiche Infernali - Ufficio Smistamento Anime");
+        stage.setOnCloseRequest(evento -> {
+            if (!contesto.isGiornataInCorso()) {
+                return;
+            }
+            Alert conferma = new Alert(Alert.AlertType.CONFIRMATION);
+            conferma.setHeaderText("Giornata in corso");
+            conferma.setContentText("I progressi della giornata non sono salvati "
+                    + "e andranno persi. Uscire comunque?");
+            if (conferma.showAndWait().filter(scelta -> scelta == ButtonType.OK).isEmpty()) {
+                evento.consume();
+            }
+        });
         router.vai("menu");
         stage.show();
     }

@@ -33,7 +33,7 @@
             <padding>
                 <Insets bottom="12" left="14" right="14" top="12"/>
             </padding>
-            <Button cancelButton="true" onAction="#onIndietro" text="Torna al rendiconto"/>
+            <Button cancelButton="true" onAction="#onIndietro" text="Indietro"/>
         </HBox>
     </bottom>
 </BorderPane>

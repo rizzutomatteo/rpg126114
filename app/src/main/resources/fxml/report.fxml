@@ -14,10 +14,12 @@
         <Insets bottom="30" left="40" right="40" top="30"/>
     </padding>
     <Label styleClass="titolo" text="Rendiconto di fine giornata"/>
+    <Label styleClass="sottotitolo" text="Carriera salvata automaticamente."/>
     <Label fx:id="lblFunzionario"/>
     <TextArea fx:id="areaReport" editable="false" prefHeight="280" wrapText="true"/>
     <Label fx:id="lblCircolare" maxWidth="760" wrapText="true"/>
     <Label fx:id="lblPunti" styleClass="intestazione"/>
+    <Label fx:id="lblSpiegazioneAbilita" maxWidth="760" wrapText="true"/>
     <HBox alignment="CENTER" spacing="10">
         <Button fx:id="btnIntuito" onAction="#onPotenziaIntuito" text="Potenzia Intuito"/>
         <Button fx:id="btnPazienza" onAction="#onPotenziaPazienza" text="Potenzia Pazienza"/>

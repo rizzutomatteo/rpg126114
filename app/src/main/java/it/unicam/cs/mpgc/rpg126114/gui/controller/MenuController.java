@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 /**
@@ -24,6 +25,8 @@ public class MenuController {
     private TextField campoNome;
     @FXML
     private Button btnCarica;
+    @FXML
+    private Label lblSalvataggio;
 
     public MenuController(ContestoGioco contesto, SceneRouter router) {
         this.contesto = contesto;
@@ -33,6 +36,12 @@ public class MenuController {
     @FXML
     private void initialize() {
         btnCarica.setDisable(!contesto.esisteSalvataggio());
+        lblSalvataggio.setText(contesto.descrizioneSalvataggio().orElse(""));
+    }
+
+    @FXML
+    private void onManuale() {
+        router.vai("manuale");
     }
 
     @FXML

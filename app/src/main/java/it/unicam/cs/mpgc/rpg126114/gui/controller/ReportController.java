@@ -1,6 +1,7 @@
 package it.unicam.cs.mpgc.rpg126114.gui.controller;
 
 import it.unicam.cs.mpgc.rpg126114.engine.ReportGiornata;
+import it.unicam.cs.mpgc.rpg126114.engine.ValutatoreVerdetti;
 import it.unicam.cs.mpgc.rpg126114.gui.ContestoGioco;
 import it.unicam.cs.mpgc.rpg126114.gui.SceneRouter;
 import it.unicam.cs.mpgc.rpg126114.model.carriera.Funzionario;
@@ -25,6 +26,8 @@ public class ReportController {
     @FXML
     private Label lblPunti;
     @FXML
+    private Label lblSpiegazioneAbilita;
+    @FXML
     private TextArea areaReport;
     @FXML
     private Button btnIntuito;
@@ -47,6 +50,13 @@ public class ReportController {
                         regola -> lblCircolare.setText("Circolare: da domani entra in vigore "
                                 + regola.descrizione() + " - " + regola.spiegazione()),
                         () -> lblCircolare.setText(""));
+        int rimaste = contesto.getServizio().animeFrescheRimaste();
+        areaReport.appendText("\n\nAnime ancora in attesa di giudizio negli archivi: "
+                + rimaste + (rimaste == 0 ? " - domani scatta il pensionamento!" : "."));
+        lblSpiegazioneAbilita.setText("Intuito: +" + ValutatoreVerdetti.PREMIO_INTUITO
+                + " karma su ogni verdetto conforme. Pazienza: +1 colloquio al giorno. "
+                + "Una promozione ogni " + Funzionario.KARMA_PER_LIVELLO
+                + " karma frutta un punto abilita'.");
         aggiornaStato();
     }
 
