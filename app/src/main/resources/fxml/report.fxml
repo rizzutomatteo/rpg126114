@@ -16,6 +16,7 @@
     <Label styleClass="titolo" text="Rendiconto di fine giornata"/>
     <Label fx:id="lblFunzionario"/>
     <TextArea fx:id="areaReport" editable="false" prefHeight="280" wrapText="true"/>
+    <Label fx:id="lblCircolare" maxWidth="760" wrapText="true"/>
     <Label fx:id="lblPunti" styleClass="intestazione"/>
     <HBox alignment="CENTER" spacing="10">
         <Button fx:id="btnIntuito" onAction="#onPotenziaIntuito" text="Potenzia Intuito"/>

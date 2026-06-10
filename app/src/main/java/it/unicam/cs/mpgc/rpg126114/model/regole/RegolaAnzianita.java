@@ -34,4 +34,11 @@ public class RegolaAnzianita implements Regola {
     public String descrizione() {
         return "Regola dell'Anzianita'";
     }
+
+    @Override
+    public String spiegazione() {
+        return "Le anime morte prima del " + annoLimite + " hanno atteso troppo "
+                + "per i criteri moderni: spettano al Limbo, qualunque cosa "
+                + "dica il resto del fascicolo.";
+    }
 }

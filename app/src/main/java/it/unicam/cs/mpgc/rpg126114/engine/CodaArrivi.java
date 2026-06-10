@@ -5,6 +5,7 @@ import it.unicam.cs.mpgc.rpg126114.model.anima.Anima;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,12 +33,28 @@ public class CodaArrivi {
     public static final long INTERVALLO_PREDEFINITO_MILLIS = 2500;
 
     private final BlockingQueue<Anima> coda = new LinkedBlockingQueue<>();
+    private final Random random;
     private ExecutorService esecutore;
     private volatile boolean attiva;
     private volatile Consumer<Integer> osservatoreArrivi;
 
+    public CodaArrivi() {
+        this(new Random());
+    }
+
     /**
-     * Avvia la consegna del lotto su un thread dedicato.
+     * @param random sorgente di casualita' per il ritmo degli arrivi, non null
+     * @throws IllegalArgumentException se random e' null
+     */
+    public CodaArrivi(Random random) {
+        if (random == null) {
+            throw new IllegalArgumentException("La sorgente di casualita' non puo' essere null");
+        }
+        this.random = random;
+    }
+
+    /**
+     * Avvia la consegna del lotto a intervalli fissi (comodo nei test).
      *
      * @param arrivi           le anime da consegnare, in ordine, non vuoto
      * @param intervalloMillis attesa tra un arrivo e il successivo, non negativa
@@ -45,11 +62,29 @@ public class CodaArrivi {
      * @throws IllegalStateException    se la coda e' gia' attiva
      */
     public void avvia(List<Anima> arrivi, long intervalloMillis) {
+        avvia(arrivi, intervalloMillis, intervalloMillis, intervalloMillis);
+    }
+
+    /**
+     * Avvia la consegna con un ritmo "da sportello": il primo arrivo dopo
+     * una breve attesa (il Funzionario non deve fissare una scrivania
+     * vuota), i successivi a intervalli casuali nell'intervallo indicato,
+     * cosi' la coda si muove davvero mentre il giocatore lavora.
+     *
+     * @param arrivi            le anime da consegnare, in ordine, non vuoto
+     * @param primoArrivoMillis attesa prima del primo arrivo, non negativa
+     * @param minimoMillis      attesa minima tra gli arrivi successivi
+     * @param massimoMillis     attesa massima tra gli arrivi successivi
+     * @throws IllegalArgumentException se i parametri non sono validi
+     * @throws IllegalStateException    se la coda e' gia' attiva
+     */
+    public void avvia(List<Anima> arrivi, long primoArrivoMillis,
+                      long minimoMillis, long massimoMillis) {
         if (arrivi == null || arrivi.isEmpty()) {
             throw new IllegalArgumentException("Il lotto degli arrivi non puo' essere vuoto");
         }
-        if (intervalloMillis < 0) {
-            throw new IllegalArgumentException("Intervallo negativo: " + intervalloMillis);
+        if (primoArrivoMillis < 0 || minimoMillis < 0 || massimoMillis < minimoMillis) {
+            throw new IllegalArgumentException("Ritmo degli arrivi non valido");
         }
         if (attiva) {
             throw new IllegalStateException("La coda degli arrivi e' gia' attiva");
@@ -62,16 +97,20 @@ public class CodaArrivi {
             thread.setDaemon(true);
             return thread;
         });
-        esecutore.submit(() -> consegna(lotto, intervalloMillis));
+        esecutore.submit(() -> consegna(lotto, primoArrivoMillis, minimoMillis, massimoMillis));
     }
 
-    private void consegna(List<Anima> lotto, long intervalloMillis) {
+    private void consegna(List<Anima> lotto, long primoArrivoMillis,
+                          long minimoMillis, long massimoMillis) {
         try {
+            boolean primoArrivo = true;
             for (Anima anima : lotto) {
                 if (!attiva) {
                     return;
                 }
-                Thread.sleep(intervalloMillis);
+                Thread.sleep(primoArrivo ? primoArrivoMillis
+                        : attesaCasuale(minimoMillis, massimoMillis));
+                primoArrivo = false;
                 if (!attiva) {
                     return;
                 }
@@ -86,6 +125,14 @@ public class CodaArrivi {
         } finally {
             attiva = false;
         }
+    }
+
+    private long attesaCasuale(long minimoMillis, long massimoMillis) {
+        long ampiezza = massimoMillis - minimoMillis;
+        if (ampiezza <= 0) {
+            return minimoMillis;
+        }
+        return minimoMillis + random.nextLong(ampiezza + 1);
     }
 
     /**

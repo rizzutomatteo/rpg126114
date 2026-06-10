@@ -24,6 +24,7 @@
             <Label fx:id="lblRimanenti"/>
             <Label fx:id="lblCoda"/>
             <Label fx:id="lblColloqui"/>
+            <Label fx:id="lblAvviso" styleClass="intestazione"/>
         </HBox>
     </top>
     <left>
@@ -51,6 +52,15 @@
             </HBox>
         </VBox>
     </center>
+    <right>
+        <VBox prefWidth="290" spacing="8" styleClass="pannello">
+            <padding>
+                <Insets bottom="12" left="8" right="14" top="12"/>
+            </padding>
+            <Label styleClass="intestazione" text="Regolamento del giorno"/>
+            <TextArea fx:id="areaRegolamento" editable="false" wrapText="true" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </right>
     <bottom>
         <HBox alignment="CENTER_LEFT" spacing="10" styleClass="barra-verdetti">
             <padding>

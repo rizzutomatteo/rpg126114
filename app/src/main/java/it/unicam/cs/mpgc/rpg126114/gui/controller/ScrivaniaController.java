@@ -6,8 +6,10 @@ import it.unicam.cs.mpgc.rpg126114.gui.ContestoGioco;
 import it.unicam.cs.mpgc.rpg126114.gui.SceneRouter;
 import it.unicam.cs.mpgc.rpg126114.model.documenti.Documento;
 import it.unicam.cs.mpgc.rpg126114.model.documenti.Fascicolo;
+import it.unicam.cs.mpgc.rpg126114.model.regole.Regola;
 import it.unicam.cs.mpgc.rpg126114.model.verdetti.Destinazione;
 import it.unicam.cs.mpgc.rpg126114.model.verdetti.Timbro;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -16,6 +18,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 
 import java.util.Optional;
@@ -50,11 +53,15 @@ public class ScrivaniaController {
     @FXML
     private Label lblColloqui;
     @FXML
+    private Label lblAvviso;
+    @FXML
     private ListView<String> listaDocumenti;
     @FXML
     private TextArea areaDocumento;
     @FXML
     private TextArea areaColloquio;
+    @FXML
+    private TextArea areaRegolamento;
     @FXML
     private ComboBox<Timbro> comboTimbro;
     @FXML
@@ -69,6 +76,8 @@ public class ScrivaniaController {
     private Button btnLimbo;
     @FXML
     private Button btnInferno;
+
+    private PauseTransition pulsazioneAvviso;
 
     public ScrivaniaController(ContestoGioco contesto, SceneRouter router) {
         this.contesto = contesto;
@@ -90,6 +99,8 @@ public class ScrivaniaController {
         });
         listaDocumenti.getSelectionModel().selectedIndexProperty()
                 .addListener((osservato, vecchio, nuovo) -> mostraDocumento(nuovo.intValue()));
+        pulsazioneAvviso = new PauseTransition(Duration.seconds(4));
+        pulsazioneAvviso.setOnFinished(evento -> lblAvviso.setText(""));
 
         GiornataService servizio = contesto.getServizio();
         servizio.setOsservatoreArrivi(inAttesa -> Platform.runLater(this::onArrivo));
@@ -102,11 +113,49 @@ public class ScrivaniaController {
                 router.vai("menu");
                 return;
             }
+            annunciaCircolareDelGiorno();
         }
+        mostraRegolamento();
         tentaProssimaPratica();
     }
 
+    /**
+     * La circolare con la regola che entra in vigore oggi: mostrata dopo
+     * la costruzione della scena, sul thread JavaFX.
+     */
+    private void annunciaCircolareDelGiorno() {
+        contesto.getServizio().nuovaRegolaDelGiorno().ifPresent(regola ->
+                Platform.runLater(() -> mostraMessaggio(Alert.AlertType.INFORMATION,
+                        "Circolare di servizio",
+                        "Da oggi e' in vigore: " + regola.descrizione()
+                                + "\n\n" + regola.spiegazione())));
+    }
+
+    /**
+     * Il pannello sempre visibile con le regole in vigore e i timbri
+     * disponibili: il Funzionario deve sapere con quali criteri giudica.
+     */
+    private void mostraRegolamento() {
+        GiornataService servizio = contesto.getServizio();
+        if (servizio.getGiornata() == null) {
+            return;
+        }
+        StringBuilder testo = new StringBuilder();
+        for (Regola regola : servizio.getGiornata().getRegolamento().getRegole()) {
+            testo.append("• ").append(regola.descrizione()).append('\n')
+                    .append(regola.spiegazione()).append("\n\n");
+        }
+        testo.append("TIMBRI DISPONIBILI\n");
+        for (Timbro timbro : contesto.getPartita().getFunzionario().timbriDisponibili()) {
+            testo.append("• ").append(timbro.getEtichetta())
+                    .append(" (karma x").append(timbro.getMoltiplicatore()).append(")\n");
+        }
+        areaRegolamento.setText(testo.toString());
+    }
+
     private void onArrivo() {
+        lblAvviso.setText("Nuovo arrivo allo sportello");
+        pulsazioneAvviso.playFromStart();
         aggiornaBarraDiStato();
         if (contesto.getServizio().getFascicoloCorrente() == null) {
             tentaProssimaPratica();
@@ -250,6 +299,7 @@ public class ScrivaniaController {
         comboTimbro.getItems().setAll(
                 contesto.getPartita().getFunzionario().timbriDisponibili());
         comboTimbro.getSelectionModel().selectFirst();
+        mostraRegolamento();
         abilitaAzioni(true);
         aggiornaBarraDiStato();
     }

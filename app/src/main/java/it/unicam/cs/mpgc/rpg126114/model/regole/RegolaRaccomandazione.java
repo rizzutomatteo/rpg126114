@@ -31,4 +31,11 @@ public class RegolaRaccomandazione implements Regola {
     public String descrizione() {
         return "Regola della Raccomandazione";
     }
+
+    @Override
+    public String spiegazione() {
+        return "Una lettera con firma autentica spinge verso il Paradiso con la "
+                + "forza del firmatario; una firma contraffatta e' un'aggravante "
+                + "infernale. Controllare sempre l'attendibilita'.";
+    }
 }

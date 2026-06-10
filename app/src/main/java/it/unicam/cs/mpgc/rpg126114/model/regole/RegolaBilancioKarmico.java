@@ -47,4 +47,11 @@ public class RegolaBilancioKarmico implements Regola {
     public String descrizione() {
         return "Regola del Bilancio Karmico";
     }
+
+    @Override
+    public String spiegazione() {
+        return "Bilancio karmico = meriti delle virtu' meno gravita' dei peccati. "
+                + "Da " + sogliaParadiso + " in su: Paradiso. "
+                + "Da " + sogliaInferno + " in giu': Inferno. Nel mezzo: Purgatorio.";
+    }
 }
