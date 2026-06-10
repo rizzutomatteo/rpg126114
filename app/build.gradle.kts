@@ -36,3 +36,9 @@ tasks.test {
         events("passed", "skipped", "failed")
     }
 }
+
+tasks.javadoc {
+    // Controlli doclint attivi tranne i "missing": i commenti con soli
+    // @param/@return sono uno stile accettato in questo progetto.
+    (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:all,-missing", "-quiet")
+}
