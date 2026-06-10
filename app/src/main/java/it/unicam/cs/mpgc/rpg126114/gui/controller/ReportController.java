@@ -21,6 +21,8 @@ public class ReportController {
     @FXML
     private Label lblFunzionario;
     @FXML
+    private Label lblCircolare;
+    @FXML
     private Label lblPunti;
     @FXML
     private TextArea areaReport;
@@ -40,6 +42,11 @@ public class ReportController {
         if (report != null) {
             areaReport.setText(report.riepilogo());
         }
+        contesto.getServizio().nuovaRegolaPer(contesto.getPartita().getGiornataCorrente())
+                .ifPresentOrElse(
+                        regola -> lblCircolare.setText("Circolare: da domani entra in vigore "
+                                + regola.descrizione() + " - " + regola.spiegazione()),
+                        () -> lblCircolare.setText(""));
         aggiornaStato();
     }
 

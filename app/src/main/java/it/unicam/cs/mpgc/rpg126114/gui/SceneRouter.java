@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class SceneRouter {
 
-    private static final double LARGHEZZA = 1000;
+    private static final double LARGHEZZA = 1200;
     private static final double ALTEZZA = 660;
 
     private final Stage stage;
