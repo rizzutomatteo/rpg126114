@@ -5,11 +5,6 @@ import it.unicam.cs.mpgc.rpg126114.model.carriera.Giornata;
 import it.unicam.cs.mpgc.rpg126114.model.carriera.Partita;
 import it.unicam.cs.mpgc.rpg126114.model.documenti.Fascicolo;
 import it.unicam.cs.mpgc.rpg126114.model.regole.Regola;
-import it.unicam.cs.mpgc.rpg126114.model.regole.RegolaAnzianita;
-import it.unicam.cs.mpgc.rpg126114.model.regole.RegolaBilancioKarmico;
-import it.unicam.cs.mpgc.rpg126114.model.regole.RegolaContraddizioni;
-import it.unicam.cs.mpgc.rpg126114.model.regole.RegolaPentimento;
-import it.unicam.cs.mpgc.rpg126114.model.regole.RegolaRaccomandazione;
 import it.unicam.cs.mpgc.rpg126114.model.regole.Regolamento;
 import it.unicam.cs.mpgc.rpg126114.model.verdetti.Destinazione;
 import it.unicam.cs.mpgc.rpg126114.model.verdetti.Timbro;
@@ -39,9 +34,6 @@ public class GiornataService {
     public static final int KARMA_DENUNCIA_CORRETTA = 15;
     public static final int PENALE_DENUNCIA_ERRATA = -10;
     public static final int PENALE_IMPOSTORE_GIUDICATO = -10;
-    public static final int SOGLIA_PARADISO = 5;
-    public static final int SOGLIA_INFERNO = -5;
-    public static final int ANNO_ANIME_ANTICHE = 1700;
     public static final long PRIMO_ARRIVO_PREDEFINITO_MILLIS = 1500;
     public static final long INTERVALLO_MINIMO_PREDEFINITO_MILLIS = 18000;
     public static final long INTERVALLO_MASSIMO_PREDEFINITO_MILLIS = 32000;
@@ -51,6 +43,7 @@ public class GiornataService {
     private final GeneratoreFascicoli generatoreFascicoli;
     private final ValutatoreVerdetti valutatore;
     private final CodaArrivi codaArrivi;
+    private final CalendarioRegolamenti calendario;
 
     private Giornata giornata;
     private Fascicolo fascicoloCorrente;
@@ -68,13 +61,14 @@ public class GiornataService {
      * @param generatoreFascicoli il compositore di fascicoli, non null
      * @param valutatore          il valutatore dei verdetti, non null
      * @param codaArrivi          la coda concorrente degli arrivi, non null
+     * @param calendario          il calendario dei regolamenti, non null
      * @throws IllegalArgumentException se un collaboratore e' null
      */
     public GiornataService(Partita partita, GeneratoreAnime generatoreAnime,
                            GeneratoreFascicoli generatoreFascicoli, ValutatoreVerdetti valutatore,
-                           CodaArrivi codaArrivi) {
+                           CodaArrivi codaArrivi, CalendarioRegolamenti calendario) {
         if (partita == null || generatoreAnime == null || generatoreFascicoli == null
-                || valutatore == null || codaArrivi == null) {
+                || valutatore == null || codaArrivi == null || calendario == null) {
             throw new IllegalArgumentException("Tutti i collaboratori del servizio sono obbligatori");
         }
         this.partita = partita;
@@ -82,6 +76,7 @@ public class GiornataService {
         this.generatoreFascicoli = generatoreFascicoli;
         this.valutatore = valutatore;
         this.codaArrivi = codaArrivi;
+        this.calendario = calendario;
     }
 
     /**
@@ -130,53 +125,27 @@ public class GiornataService {
     }
 
     /**
-     * Il regolamento si arricchisce con il passare delle giornate: ogni
-     * giorno di carriera introduce un nuovo criterio di giudizio.
+     * Il regolamento in vigore in una giornata, secondo il calendario
+     * iniettato nel servizio.
      *
      * @param numero il numero della giornata
      * @return il regolamento in vigore quel giorno
      */
     public Regolamento regolamentoPerGiornata(int numero) {
-        List<Regola> regole = new ArrayList<>();
-        regole.add(new RegolaBilancioKarmico(SOGLIA_PARADISO, SOGLIA_INFERNO));
-        if (numero >= 2) {
-            regole.add(new RegolaContraddizioni());
-        }
-        if (numero >= 3) {
-            regole.add(new RegolaRaccomandazione());
-        }
-        if (numero >= 4) {
-            regole.add(new RegolaAnzianita(ANNO_ANIME_ANTICHE));
-        }
-        if (numero >= 5) {
-            regole.add(new RegolaPentimento());
-        }
-        return new Regolamento(regole);
+        return calendario.regolamentoPer(numero);
     }
 
     /**
-     * La regola che entra in vigore nella giornata indicata: per la prima
-     * giornata e' la regola di base, per le successive l'eventuale regola
-     * aggiunta rispetto al giorno prima. Alimenta le "circolari di
-     * servizio" mostrate al giocatore.
+     * La regola che entra in vigore nella giornata indicata, secondo il
+     * calendario. Alimenta le "circolari di servizio" mostrate al
+     * giocatore.
      *
      * @param numero il numero della giornata, almeno 1
      * @return la regola introdotta quel giorno, se ce n'e' una
      * @throws IllegalArgumentException se il numero non e' valido
      */
     public Optional<Regola> nuovaRegolaPer(int numero) {
-        if (numero < 1) {
-            throw new IllegalArgumentException("Numero di giornata non valido: " + numero);
-        }
-        List<Regola> regoleDiOggi = regolamentoPerGiornata(numero).getRegole();
-        if (numero == 1) {
-            return Optional.of(regoleDiOggi.get(regoleDiOggi.size() - 1));
-        }
-        List<Regola> regoleDiIeri = regolamentoPerGiornata(numero - 1).getRegole();
-        if (regoleDiOggi.size() > regoleDiIeri.size()) {
-            return Optional.of(regoleDiOggi.get(regoleDiOggi.size() - 1));
-        }
-        return Optional.empty();
+        return calendario.nuovaRegolaPer(numero);
     }
 
     /**

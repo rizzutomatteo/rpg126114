@@ -46,7 +46,8 @@ class GiornataServiceTest {
                 new GeneratoreAnime(pool, new Random(7), probabilitaImpostore),
                 new GeneratoreFascicoli(new Random(7)),
                 new ValutatoreVerdetti(),
-                new CodaArrivi());
+                new CodaArrivi(),
+                new CalendarioRegolamenti());
         servizio.setRitmoArrivi(0, 0, 0);
         return servizio;
     }
