@@ -5,20 +5,19 @@ import it.unicam.cs.mpgc.rpg126114.model.verdetti.Destinazione;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Il regolamento in vigore in una giornata: un insieme immutabile di
- * regole i cui esiti vengono combinati per stabilire la destinazione
- * attesa di un fascicolo.
+ * regole, ordinate per anzianita' crescente (l'ultima e' la piu'
+ * recente), che stabiliscono la destinazione attesa di un fascicolo.
  *
- * <p>Il motore dipende solo dall'astrazione {@link Regola}: il regolamento
- * non conosce le regole concrete che contiene (principio di inversione
- * delle dipendenze).</p>
+ * <p>Le regole piu' recenti hanno la precedenza: la regola piu' recente
+ * che si applica al caso decide la destinazione; le altre applicabili
+ * restano a verbale come pareri non vincolanti. Il motore dipende solo
+ * dall'astrazione {@link Regola}: il regolamento non conosce le regole
+ * concrete che contiene (principio di inversione delle dipendenze).</p>
  */
 public class Regolamento {
 
@@ -43,11 +42,11 @@ public class Regolamento {
     }
 
     /**
-     * Valuta il fascicolo in un unico passaggio e produce il verbale:
-     * vince la destinazione con il peso totale piu' alto, a parita' di
-     * peso prevale la piu' severa; se nessuna regola si applica l'anima
-     * va in Purgatorio per smistamento d'ufficio. Le motivazioni
-     * riportano regola, peso ed esito.
+     * Valuta il fascicolo e produce il verbale: tra le regole applicabili
+     * decide la piu' recente (la regola di oggi sta sopra a tutte, quella
+     * di ieri appena sotto, e cosi' via); le altre restano a verbale come
+     * pareri non vincolanti. Se nessuna regola si applica, l'anima va in
+     * Purgatorio per smistamento d'ufficio.
      *
      * @param fascicolo il fascicolo a giudizio
      * @return il verbale con destinazione prevista e motivazioni
@@ -56,29 +55,27 @@ public class Regolamento {
      */
     public Verbale verbale(Fascicolo fascicolo) {
         fascicolo.valida();
-        List<Esito> esiti = new ArrayList<>();
         List<String> motivazioni = new ArrayList<>();
-        for (Regola regola : regole) {
+        Destinazione decisione = null;
+        for (int i = regole.size() - 1; i >= 0; i--) {
+            Regola regola = regole.get(i);
             Optional<Esito> esito = regola.valuta(fascicolo);
-            if (esito.isPresent()) {
-                esiti.add(esito.get());
-                motivazioni.add(regola.descrizione() + " [peso " + esito.get().getPeso()
-                        + "]: " + esito.get().getMotivazione());
+            if (esito.isEmpty()) {
+                continue;
+            }
+            String voce = regola.descrizione() + ": " + esito.get().getMotivazione();
+            if (decisione == null) {
+                decisione = esito.get().getDestinazione();
+                motivazioni.add(voce + " (decide: regola piu' recente applicabile)");
+            } else {
+                motivazioni.add(voce + " (parere non vincolante)");
             }
         }
-        return new Verbale(destinazionePiuVotata(esiti), motivazioni);
-    }
-
-    private Destinazione destinazionePiuVotata(List<Esito> esiti) {
-        Map<Destinazione, Integer> pesiPerDestinazione = esiti.stream()
-                .collect(Collectors.groupingBy(Esito::getDestinazione,
-                        Collectors.summingInt(Esito::getPeso)));
-        return pesiPerDestinazione.entrySet().stream()
-                .max(Comparator
-                        .comparingInt((Map.Entry<Destinazione, Integer> voce) -> voce.getValue())
-                        .thenComparing(voce -> voce.getKey().ordinal()))
-                .map(Map.Entry::getKey)
-                .orElse(Destinazione.PURGATORIO);
+        if (decisione == null) {
+            decisione = Destinazione.PURGATORIO;
+            motivazioni.add("Nessuna regola si applica: Purgatorio per smistamento d'ufficio.");
+        }
+        return new Verbale(decisione, motivazioni);
     }
 
     /**
@@ -91,7 +88,7 @@ public class Regolamento {
 
     /**
      * @param fascicolo il fascicolo a giudizio
-     * @return una motivazione per ogni regola applicabile, in ordine di regola
+     * @return una motivazione per ogni regola applicabile, dalla piu' recente
      */
     public List<String> motivazioni(Fascicolo fascicolo) {
         return verbale(fascicolo).getMotivazioni();

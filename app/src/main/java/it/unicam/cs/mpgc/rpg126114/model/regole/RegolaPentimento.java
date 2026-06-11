@@ -30,7 +30,7 @@ public class RegolaPentimento implements Regola {
         if (!sincera) {
             return Optional.empty();
         }
-        return Optional.of(new Esito(Destinazione.PURGATORIO, Esito.PESO_FORTE,
+        return Optional.of(new Esito(Destinazione.PURGATORIO,
                 "confessione sincera, nessun peccato capitale taciuto"));
     }
 

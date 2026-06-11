@@ -20,10 +20,10 @@ public class RegolaRaccomandazione implements Regola {
 
     private Esito esitoPer(LetteraRaccomandazione lettera) {
         if (lettera.isAttendibile()) {
-            return new Esito(Destinazione.PARADISO, lettera.getPeso(),
+            return new Esito(Destinazione.PARADISO,
                     "raccomandazione autentica di " + lettera.getFirmatario());
         }
-        return new Esito(Destinazione.INFERNO, Esito.PESO_FORTE,
+        return new Esito(Destinazione.INFERNO,
                 "raccomandazione contraffatta a nome di " + lettera.getFirmatario());
     }
 

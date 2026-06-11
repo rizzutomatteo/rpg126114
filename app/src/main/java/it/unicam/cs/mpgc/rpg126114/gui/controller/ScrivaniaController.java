@@ -22,6 +22,7 @@ import javafx.scene.control.TextArea;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -144,17 +145,25 @@ public class ScrivaniaController {
         }
         StringBuilder testo = new StringBuilder();
 
-        testo.append("REGOLE DI OGGI\n");
-        for (Regola regola : servizio.getGiornata().getRegolamento().getRegole()) {
+        testo.append("REGOLE DI OGGI (dalla piu' recente)\n");
+        // Le regole sono in ordine di anzianita' crescente: le mostro
+        // dalla piu' recente (che ha la precedenza) alla piu' vecchia.
+        List<Regola> regole = servizio.getGiornata().getRegolamento().getRegole();
+        for (int i = regole.size() - 1; i >= 0; i--) {
+            Regola regola = regole.get(i);
             testo.append("\n• ").append(nomeBreve(regola)).append('\n');
-            testo.append("   ").append(regola.spiegazione()).append('\n');
+            for (String riga : regola.spiegazione().split("\n")) {
+                testo.append("   ").append(riga).append('\n');
+            }
         }
 
         testo.append("\nCOME SI DECIDE\n\n");
-        testo.append("• Ogni regola spinge verso una destinazione.\n");
-        testo.append("• Vince la piu' spinta (gli inganni pesano di piu').\n");
-        testo.append("• In pareggio vince la piu' severa:\n");
-        testo.append("   Paradiso < Purgatorio < Limbo < Inferno.\n");
+        testo.append("• Conta la regola piu' recente che riguarda il caso.\n");
+        testo.append("• La regola di oggi sta sopra a tutte, quella di ieri\n");
+        testo.append("   appena sotto, e cosi' via.\n");
+        testo.append("• Le regole piu' vecchie contano solo se le piu' recenti\n");
+        testo.append("   non si applicano.\n");
+        testo.append("• Se nessuna regola riguarda il caso: Purgatorio.\n");
         testo.append("• Il timbro moltiplica il karma, nel bene e nel male.\n");
 
         testo.append("\nTIMBRI\n\n");

@@ -28,7 +28,7 @@ public class RegolaContraddizioni implements Regola {
     private Optional<Esito> controllaTestamento(Fascicolo fascicolo) {
         return fascicolo.trova(Testamento.class)
                 .filter(t -> t.getAnnoRedazione() > fascicolo.getAnima().getAnnoMorte())
-                .map(t -> new Esito(Destinazione.INFERNO, Esito.PESO_DETERMINANTE,
+                .map(t -> new Esito(Destinazione.INFERNO,
                         "testamento redatto nel " + t.getAnnoRedazione()
                                 + ", dopo la morte del " + fascicolo.getAnima().getAnnoMorte()));
     }
@@ -43,7 +43,7 @@ public class RegolaContraddizioni implements Regola {
                 .filter(Peccato::isCapitale)
                 .filter(confessione.get()::omette)
                 .findFirst();
-        return capitaleTaciuto.map(peccato -> new Esito(Destinazione.INFERNO, Esito.PESO_DETERMINANTE,
+        return capitaleTaciuto.map(peccato -> new Esito(Destinazione.INFERNO,
                 "ha taciuto un peccato capitale: " + peccato.getDescrizione()));
     }
 
