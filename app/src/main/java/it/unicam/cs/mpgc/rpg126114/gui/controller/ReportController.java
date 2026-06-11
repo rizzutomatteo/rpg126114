@@ -6,6 +6,7 @@ import it.unicam.cs.mpgc.rpg126114.gui.ContestoGioco;
 import it.unicam.cs.mpgc.rpg126114.gui.SceneRouter;
 import it.unicam.cs.mpgc.rpg126114.model.carriera.Funzionario;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -76,7 +77,21 @@ public class ReportController {
 
     @FXML
     private void onProssimaGiornata() {
+        if (contesto.getServizio().animeFrescheRimaste() == 0) {
+            mostraPensionamento();
+            return;
+        }
         router.vai("scrivania");
+    }
+
+    private void mostraPensionamento() {
+        Alert finestra = new Alert(Alert.AlertType.INFORMATION);
+        finestra.setHeaderText("Pensionamento con onore");
+        finestra.setContentText("Non ci sono piu' anime da giudicare: il Funzionario "
+                + contesto.getPartita().getFunzionario().getNome()
+                + " ha meritato il riposo eterno (quello buono).");
+        finestra.showAndWait();
+        router.vai("menu");
     }
 
     @FXML

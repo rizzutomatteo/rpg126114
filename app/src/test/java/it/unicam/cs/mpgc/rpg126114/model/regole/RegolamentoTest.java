@@ -87,6 +87,19 @@ class RegolamentoTest {
     }
 
     @Test
+    void ilVerbaleValutaLeRegoleInUnSoloPassaggio() {
+        Regolamento regolamento = new Regolamento(List.of(new RegolaBilancioKarmico(5, -5)));
+        Fascicolo fascicolo = fascicoloValido();
+
+        Verbale verbale = regolamento.verbale(fascicolo);
+
+        assertEquals(regolamento.destinazioneAttesa(fascicolo), verbale.getDestinazione());
+        assertEquals(regolamento.motivazioni(fascicolo), verbale.getMotivazioni());
+        assertThrows(UnsupportedOperationException.class,
+                () -> verbale.getMotivazioni().add("intrusione"));
+    }
+
+    @Test
     void regoleNullRifiutate() {
         assertThrows(IllegalArgumentException.class, () -> new Regolamento(null));
     }

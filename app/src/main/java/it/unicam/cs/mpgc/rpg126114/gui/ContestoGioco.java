@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.rpg126114.gui;
 
+import it.unicam.cs.mpgc.rpg126114.engine.CalendarioRegolamenti;
 import it.unicam.cs.mpgc.rpg126114.engine.CodaArrivi;
 import it.unicam.cs.mpgc.rpg126114.engine.GeneratoreAnime;
 import it.unicam.cs.mpgc.rpg126114.engine.GeneratoreFascicoli;
@@ -88,7 +89,8 @@ public class ContestoGioco {
                         GeneratoreAnime.PROBABILITA_IMPOSTORE_PREDEFINITA),
                 new GeneratoreFascicoli(new Random()),
                 new ValutatoreVerdetti(),
-                new CodaArrivi());
+                new CodaArrivi(),
+                new CalendarioRegolamenti());
         ultimoReport = null;
     }
 

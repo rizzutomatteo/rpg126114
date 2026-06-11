@@ -21,8 +21,9 @@ Gestione della Conoscenza** (UNICAM, A.A. 2025/26).
 ./gradlew run
 ```
 
-Serve solo un JDK per avviare il wrapper Gradle: la toolchain scarica
-automaticamente il JDK richiesto dal progetto. Interfaccia grafica JavaFX,
+Serve solo un JDK (versione 17 o superiore, per avviare il wrapper
+Gradle): la toolchain scarica automaticamente il JDK richiesto dal
+progetto. Interfaccia grafica JavaFX,
 risolta come dipendenza Gradle (nessuna installazione manuale).
 
 ## Come si gioca

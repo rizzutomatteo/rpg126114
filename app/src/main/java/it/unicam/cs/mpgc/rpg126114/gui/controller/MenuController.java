@@ -57,9 +57,18 @@ public class MenuController {
     @FXML
     private void onCaricaPartita() {
         try {
-            if (contesto.caricaPartita()) {
-                router.vai("scrivania");
+            if (!contesto.caricaPartita()) {
+                return;
             }
+            if (contesto.getServizio().animeFrescheRimaste() == 0) {
+                Alert finestra = new Alert(Alert.AlertType.INFORMATION);
+                finestra.setHeaderText("Pensionamento con onore");
+                finestra.setContentText("Questa carriera e' completa: non ci sono piu' "
+                        + "anime da giudicare negli archivi.");
+                finestra.showAndWait();
+                return;
+            }
+            router.vai("scrivania");
         } catch (PersistenzaException errore) {
             Alert avviso = new Alert(Alert.AlertType.ERROR);
             avviso.setHeaderText("Salvataggio illeggibile");

@@ -23,7 +23,7 @@ public class RegolaRaccomandazione implements Regola {
             return new Esito(Destinazione.PARADISO, lettera.getPeso(),
                     "raccomandazione autentica di " + lettera.getFirmatario());
         }
-        return new Esito(Destinazione.INFERNO, 2,
+        return new Esito(Destinazione.INFERNO, Esito.PESO_FORTE,
                 "raccomandazione contraffatta a nome di " + lettera.getFirmatario());
     }
 
@@ -34,8 +34,10 @@ public class RegolaRaccomandazione implements Regola {
 
     @Override
     public String spiegazione() {
-        return "Una lettera con firma autentica spinge verso il Paradiso con la "
-                + "forza del firmatario; una firma contraffatta e' un'aggravante "
-                + "infernale. Controllare sempre l'attendibilita'.";
+        return "Una lettera con firma autentica spinge verso il Paradiso con "
+                + "l'influenza del firmatario (peso da " + LetteraRaccomandazione.PESO_MINIMO
+                + " a " + LetteraRaccomandazione.PESO_MASSIMO + "); una firma contraffatta "
+                + "vota Inferno con peso " + Esito.PESO_FORTE
+                + ". Controllare sempre l'attendibilita'.";
     }
 }

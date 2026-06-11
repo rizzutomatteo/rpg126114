@@ -30,7 +30,7 @@ public class RegolaPentimento implements Regola {
         if (!sincera) {
             return Optional.empty();
         }
-        return Optional.of(new Esito(Destinazione.PURGATORIO, 2,
+        return Optional.of(new Esito(Destinazione.PURGATORIO, Esito.PESO_FORTE,
                 "confessione sincera, nessun peccato capitale taciuto"));
     }
 
@@ -41,7 +41,9 @@ public class RegolaPentimento implements Regola {
 
     @Override
     public String spiegazione() {
-        return "Chi confessa qualcosa senza tacere alcun peccato capitale mostra "
-                + "pentimento sincero e merita la purificazione del Purgatorio.";
+        return "Chi confessa qualcosa senza tacere alcun peccato capitale "
+                + "(gravita' da " + Peccato.SOGLIA_CAPITALE + " in su) mostra "
+                + "pentimento sincero e merita la purificazione del Purgatorio. "
+                + "Vota con peso " + Esito.PESO_FORTE + ".";
     }
 }

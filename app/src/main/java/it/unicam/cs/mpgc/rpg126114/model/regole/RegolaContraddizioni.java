@@ -28,7 +28,7 @@ public class RegolaContraddizioni implements Regola {
     private Optional<Esito> controllaTestamento(Fascicolo fascicolo) {
         return fascicolo.trova(Testamento.class)
                 .filter(t -> t.getAnnoRedazione() > fascicolo.getAnima().getAnnoMorte())
-                .map(t -> new Esito(Destinazione.INFERNO, 3,
+                .map(t -> new Esito(Destinazione.INFERNO, Esito.PESO_DETERMINANTE,
                         "testamento redatto nel " + t.getAnnoRedazione()
                                 + ", dopo la morte del " + fascicolo.getAnima().getAnnoMorte()));
     }
@@ -43,7 +43,7 @@ public class RegolaContraddizioni implements Regola {
                 .filter(Peccato::isCapitale)
                 .filter(confessione.get()::omette)
                 .findFirst();
-        return capitaleTaciuto.map(peccato -> new Esito(Destinazione.INFERNO, 3,
+        return capitaleTaciuto.map(peccato -> new Esito(Destinazione.INFERNO, Esito.PESO_DETERMINANTE,
                 "ha taciuto un peccato capitale: " + peccato.getDescrizione()));
     }
 
@@ -55,6 +55,8 @@ public class RegolaContraddizioni implements Regola {
     @Override
     public String spiegazione() {
         return "Chi mente e' perduto: un testamento redatto dopo la morte o un "
-                + "peccato capitale taciuto in confessione condannano all'Inferno.";
+                + "peccato capitale (gravita' da " + Peccato.SOGLIA_CAPITALE
+                + " in su) taciuto in confessione condannano all'Inferno. "
+                + "Vota con peso " + Esito.PESO_DETERMINANTE + ".";
     }
 }
