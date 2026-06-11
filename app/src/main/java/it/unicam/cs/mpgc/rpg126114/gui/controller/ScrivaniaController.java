@@ -144,39 +144,55 @@ public class ScrivaniaController {
         }
         StringBuilder testo = new StringBuilder();
 
-        testo.append("=== REGOLE IN VIGORE OGGI ===\n\n");
-        int numero = 1;
+        testo.append("REGOLE DI OGGI\n");
         for (Regola regola : servizio.getGiornata().getRegolamento().getRegole()) {
-            testo.append(numero).append(". ").append(regola.descrizione()).append('\n');
-            testo.append("   ").append(regola.spiegazione()).append("\n\n");
-            numero++;
+            testo.append("\n• ").append(nomeBreve(regola)).append('\n');
+            testo.append("   ").append(regola.spiegazione()).append('\n');
         }
 
-        testo.append("=== COME SI DECIDE ===\n\n");
-        testo.append("- Ogni regola applicabile vota una destinazione con un peso.\n");
-        testo.append("- Vince la destinazione con il peso totale piu' alto.\n");
-        testo.append("- A parita' di peso prevale la destinazione piu' severa\n");
-        testo.append("  (Paradiso < Purgatorio < Limbo < Inferno).\n");
-        testo.append("- Il timbro scelto moltiplica il karma, nel bene e nel male.\n\n");
+        testo.append("\nCOME SI DECIDE\n\n");
+        testo.append("• Ogni regola spinge verso una destinazione.\n");
+        testo.append("• Vince la piu' spinta (gli inganni pesano di piu').\n");
+        testo.append("• In pareggio vince la piu' severa:\n");
+        testo.append("   Paradiso < Purgatorio < Limbo < Inferno.\n");
+        testo.append("• Il timbro moltiplica il karma, nel bene e nel male.\n");
 
-        testo.append("=== TIMBRI DISPONIBILI ===\n\n");
+        testo.append("\nTIMBRI\n\n");
         for (Timbro timbro : contesto.getPartita().getFunzionario().timbriDisponibili()) {
-            testo.append("- ").append(timbro.getEtichetta())
-                    .append(": karma x").append(timbro.getMoltiplicatore()).append('\n');
+            testo.append("• ").append(timbro.getEtichetta())
+                    .append(" → karma x").append(timbro.getMoltiplicatore()).append('\n');
         }
-        testo.append('\n');
 
-        testo.append("=== PROCEDURE D'UFFICIO ===\n\n");
-        testo.append("- Denuncia di un impostore fondata: +")
-                .append(GiornataService.KARMA_DENUNCIA_CORRETTA).append(" karma.\n");
-        testo.append("- Denuncia infondata: ")
-                .append(GiornataService.PENALE_DENUNCIA_ERRATA).append(" karma.\n");
-        testo.append("- Impostore giudicato senza accorgersene: ")
+        testo.append("\nPROMEMORIA\n\n");
+        testo.append("• Denuncia giusta di un impostore → +")
+                .append(GiornataService.KARMA_DENUNCIA_CORRETTA).append(" karma\n");
+        testo.append("• Denuncia sbagliata → ")
+                .append(GiornataService.PENALE_DENUNCIA_ERRATA).append(" karma\n");
+        testo.append("• Impostore non riconosciuto → ")
                 .append(GiornataService.PENALE_IMPOSTORE_GIUDICATO)
-                .append(" karma e pratica respinta.\n");
-        testo.append("- Le anime erranti ricordano al piu' una dichiarazione.\n");
+                .append(" karma, pratica respinta\n");
+        testo.append("• Anime erranti → ricordano una sola frase\n");
 
         areaRegolamento.setText(testo.toString());
+    }
+
+    /**
+     * Il nome della regola senza il prefisso "Regola", per un pannello
+     * piu' compatto.
+     *
+     * @param regola la regola di cui mostrare il nome
+     * @return il nome breve da mostrare nel pannello
+     */
+    private String nomeBreve(Regola regola) {
+        String nome = regola.descrizione();
+        String[] prefissi = {"Regola del ", "Regola dello ", "Regola della ",
+                "Regola dell'", "Regola delle ", "Regola dei "};
+        for (String prefisso : prefissi) {
+            if (nome.startsWith(prefisso)) {
+                return nome.substring(prefisso.length());
+            }
+        }
+        return nome;
     }
 
     private void onArrivo() {

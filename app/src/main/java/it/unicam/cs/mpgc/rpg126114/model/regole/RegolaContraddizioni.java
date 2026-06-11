@@ -54,9 +54,7 @@ public class RegolaContraddizioni implements Regola {
 
     @Override
     public String spiegazione() {
-        return "Chi mente e' perduto: un testamento redatto dopo la morte o un "
-                + "peccato capitale (gravita' da " + Peccato.SOGLIA_CAPITALE
-                + " in su) taciuto in confessione condannano all'Inferno. "
-                + "Vota con peso " + Esito.PESO_DETERMINANTE + ".";
+        return "Testamento scritto dopo la morte, o peccato grave (gravita' "
+                + Peccato.SOGLIA_CAPITALE + "+) nascosto in confessione: Inferno.";
     }
 }

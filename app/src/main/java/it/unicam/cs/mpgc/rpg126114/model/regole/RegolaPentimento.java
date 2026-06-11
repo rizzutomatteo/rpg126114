@@ -41,9 +41,7 @@ public class RegolaPentimento implements Regola {
 
     @Override
     public String spiegazione() {
-        return "Chi confessa qualcosa senza tacere alcun peccato capitale "
-                + "(gravita' da " + Peccato.SOGLIA_CAPITALE + " in su) mostra "
-                + "pentimento sincero e merita la purificazione del Purgatorio. "
-                + "Vota con peso " + Esito.PESO_FORTE + ".";
+        return "Confessa tutto, senza nascondere peccati gravi (gravita' "
+                + Peccato.SOGLIA_CAPITALE + "+): Purgatorio.";
     }
 }

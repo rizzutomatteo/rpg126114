@@ -34,10 +34,7 @@ public class RegolaRaccomandazione implements Regola {
 
     @Override
     public String spiegazione() {
-        return "Una lettera con firma autentica spinge verso il Paradiso con "
-                + "l'influenza del firmatario (peso da " + LetteraRaccomandazione.PESO_MINIMO
-                + " a " + LetteraRaccomandazione.PESO_MASSIMO + "); una firma contraffatta "
-                + "vota Inferno con peso " + Esito.PESO_FORTE
-                + ". Controllare sempre l'attendibilita'.";
+        return "Lettera con firma autentica spinge in Paradiso; "
+                + "firma falsa spinge all'Inferno.";
     }
 }

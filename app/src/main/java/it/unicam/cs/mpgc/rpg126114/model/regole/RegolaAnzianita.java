@@ -37,8 +37,7 @@ public class RegolaAnzianita implements Regola {
 
     @Override
     public String spiegazione() {
-        return "Le anime morte prima del " + annoLimite + " hanno atteso troppo "
-                + "per i criteri moderni: spettano al Limbo, qualunque cosa "
-                + "dica il resto del fascicolo. Vota con peso " + Esito.PESO_FORTE + ".";
+        return "Morto prima del " + annoLimite + ": va al Limbo, "
+                + "qualunque cosa dica il resto.";
     }
 }

@@ -176,7 +176,7 @@ class RegoleTest {
         assertTrue(new RegolaAnzianita(1700).spiegazione().contains("1700"));
         assertTrue(new RegolaContraddizioni().spiegazione()
                 .contains(String.valueOf(Peccato.SOGLIA_CAPITALE)));
-        assertTrue(new RegolaPentimento().spiegazione().contains("peso"));
+        assertTrue(new RegolaPentimento().spiegazione().contains("Purgatorio"));
     }
 
     @Test
