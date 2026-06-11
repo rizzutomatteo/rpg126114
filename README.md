@@ -41,10 +41,10 @@ risolta come dipendenza Gradle (nessuna installazione manuale).
 
 ## Documentazione
 
-La **Wiki** del repository documenta funzionalità, responsabilità delle
-classi, architettura (MVC, livelli, concorrenza), organizzazione dei dati,
-persistenza e meccanismi di estensione. I sorgenti delle pagine sono nella
-cartella [`wiki/`](wiki/Home.md) del repository.
+La **[Wiki del progetto su GitHub](https://github.com/rizzutomatteo/rpg126114/wiki)**
+documenta funzionalità, responsabilità delle classi, architettura (MVC,
+livelli, concorrenza), organizzazione dei dati, persistenza e meccanismi
+di estensione.
 
 ## Dichiarazione sull'uso di strumenti di AI
 
@@ -53,4 +53,4 @@ Questo progetto è stato realizzato con l'assistenza di **Claude
 dell'architettura, generazione di codice, test, contenuti di gioco e
 documentazione, sotto la supervisione e revisione dello studente. La
 dichiarazione dettagliata (strumenti e scopi, ambito per ambito) è nella
-pagina della Wiki [`Dichiarazione-AI`](wiki/Dichiarazione-AI.md).
+pagina della Wiki [`Dichiarazione-AI`](https://github.com/rizzutomatteo/rpg126114/wiki/Dichiarazione-AI).
