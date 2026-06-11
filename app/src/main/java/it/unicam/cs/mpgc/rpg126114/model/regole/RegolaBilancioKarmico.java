@@ -32,14 +32,14 @@ public class RegolaBilancioKarmico implements Regola {
     public Optional<Esito> valuta(Fascicolo fascicolo) {
         int bilancio = fascicolo.getAnima().bilancioKarmico();
         if (bilancio >= sogliaParadiso) {
-            return Optional.of(new Esito(Destinazione.PARADISO, Esito.PESO_FORTE,
+            return Optional.of(new Esito(Destinazione.PARADISO,
                     "bilancio karmico " + bilancio + ", sopra la soglia di beatitudine"));
         }
         if (bilancio <= sogliaInferno) {
-            return Optional.of(new Esito(Destinazione.INFERNO, Esito.PESO_FORTE,
+            return Optional.of(new Esito(Destinazione.INFERNO,
                     "bilancio karmico " + bilancio + ", sotto la soglia di dannazione"));
         }
-        return Optional.of(new Esito(Destinazione.PURGATORIO, Esito.PESO_INDIZIO,
+        return Optional.of(new Esito(Destinazione.PURGATORIO,
                 "bilancio karmico " + bilancio + ", caso intermedio"));
     }
 
@@ -50,8 +50,8 @@ public class RegolaBilancioKarmico implements Regola {
 
     @Override
     public String spiegazione() {
-        return "Bilancio (virtu' meno peccati): da " + sogliaParadiso
-                + " in su Paradiso, da " + sogliaInferno
-                + " in giu' Inferno, in mezzo Purgatorio.";
+        return "Bilancio (virtu' meno peccati):\n- da " + sogliaParadiso
+                + " in su Paradiso,\n- da " + sogliaInferno
+                + " in giu' Inferno,\n- in mezzo Purgatorio.";
     }
 }

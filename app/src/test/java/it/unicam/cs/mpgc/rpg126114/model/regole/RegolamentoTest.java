@@ -31,27 +31,42 @@ class RegolamentoTest {
         return fascicolo;
     }
 
-    private Regola regolaFissa(Destinazione destinazione, int peso) {
-        return fascicolo -> Optional.of(new Esito(destinazione, peso, "esito di prova"));
+    private Regola regolaFissa(Destinazione destinazione) {
+        return fascicolo -> Optional.of(new Esito(destinazione, "esito di prova"));
     }
 
     @Test
-    void vinceLaDestinazioneConPesoTotaleMaggiore() {
+    void laRegolaPiuRecenteCheSiApplicaDecide() {
+        // L'ultima regola della lista e' la piu' recente: la sua
+        // destinazione prevale su quelle delle regole piu' vecchie.
         Regolamento regolamento = new Regolamento(List.of(
-                regolaFissa(Destinazione.PARADISO, 2),
-                regolaFissa(Destinazione.PARADISO, 2),
-                regolaFissa(Destinazione.INFERNO, 3)));
+                regolaFissa(Destinazione.PARADISO),
+                regolaFissa(Destinazione.PARADISO),
+                regolaFissa(Destinazione.INFERNO)));
+
+        assertEquals(Destinazione.INFERNO, regolamento.destinazioneAttesa(fascicoloValido()));
+    }
+
+    @Test
+    void seLaPiuRecenteNonSiApplicaDecideLaPrecedente() {
+        Regolamento regolamento = new Regolamento(List.of(
+                regolaFissa(Destinazione.PARADISO),
+                fascicolo -> Optional.empty()));
 
         assertEquals(Destinazione.PARADISO, regolamento.destinazioneAttesa(fascicoloValido()));
     }
 
     @Test
-    void aParitaDiPesoPrevaleLaDestinazionePiuSevera() {
+    void leMotivazioniPartonoDallaRegolaCheDecide() {
         Regolamento regolamento = new Regolamento(List.of(
-                regolaFissa(Destinazione.PARADISO, 2),
-                regolaFissa(Destinazione.INFERNO, 2)));
+                regolaFissa(Destinazione.PARADISO),
+                regolaFissa(Destinazione.INFERNO)));
 
-        assertEquals(Destinazione.INFERNO, regolamento.destinazioneAttesa(fascicoloValido()));
+        List<String> motivazioni = regolamento.motivazioni(fascicoloValido());
+
+        assertEquals(2, motivazioni.size());
+        assertTrue(motivazioni.get(0).contains("decide"));
+        assertTrue(motivazioni.get(1).contains("non vincolante"));
     }
 
     @Test
@@ -65,7 +80,7 @@ class RegolamentoTest {
 
     @Test
     void unFascicoloMalformatoNonVaAGiudizio() {
-        Regolamento regolamento = new Regolamento(List.of(regolaFissa(Destinazione.PARADISO, 1)));
+        Regolamento regolamento = new Regolamento(List.of(regolaFissa(Destinazione.PARADISO)));
         Fascicolo senzaFedina = new Fascicolo(new AnimaComune("Senza Fedina", 1990));
 
         assertThrows(PraticaMalformataException.class,
@@ -82,8 +97,8 @@ class RegolamentoTest {
 
         assertEquals(1, motivazioni.size());
         assertTrue(motivazioni.get(0).startsWith("Regola del Bilancio Karmico"));
-        assertTrue(motivazioni.get(0).contains("[peso "),
-                "Le motivazioni devono riportare il peso dell'esito");
+        assertTrue(motivazioni.get(0).contains("decide"),
+                "La regola applicabile deve risultare quella che decide");
     }
 
     @Test

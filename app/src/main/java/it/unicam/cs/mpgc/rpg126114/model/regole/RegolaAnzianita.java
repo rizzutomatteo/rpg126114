@@ -26,7 +26,7 @@ public class RegolaAnzianita implements Regola {
         if (annoMorte >= annoLimite) {
             return Optional.empty();
         }
-        return Optional.of(new Esito(Destinazione.LIMBO, Esito.PESO_FORTE,
+        return Optional.of(new Esito(Destinazione.LIMBO,
                 "in attesa dal " + annoMorte + ", prima dell'anno limite " + annoLimite));
     }
 

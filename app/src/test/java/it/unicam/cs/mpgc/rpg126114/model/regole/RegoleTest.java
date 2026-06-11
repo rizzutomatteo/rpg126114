@@ -105,14 +105,13 @@ class RegoleTest {
     }
 
     @Test
-    void raccomandazioneAutenticaPesaQuantoIlFirmatario() {
+    void raccomandazioneAutenticaPortaInParadiso() {
         Fascicolo fascicolo = fascicoloConBilancio(0, 0);
         fascicolo.aggiungi(new LetteraRaccomandazione("Arcangelo Capoufficio", 4, true));
 
         Esito esito = new RegolaRaccomandazione().valuta(fascicolo).orElseThrow();
 
         assertEquals(Destinazione.PARADISO, esito.getDestinazione());
-        assertEquals(4, esito.getPeso());
     }
 
     @Test
@@ -182,7 +181,7 @@ class RegoleTest {
     @Test
     void unaRegolaPuoEssereEspressaComeLambda() {
         Regola regolaSpeciale = fascicolo ->
-                Optional.of(new Esito(Destinazione.LIMBO, 1, "giornata di sciopero celeste"));
+                Optional.of(new Esito(Destinazione.LIMBO, "giornata di sciopero celeste"));
 
         Esito esito = regolaSpeciale.valuta(fascicoloConBilancio(0, 0)).orElseThrow();
 
