@@ -43,7 +43,7 @@
             <padding>
                 <Insets bottom="12" left="8" right="14" top="12"/>
             </padding>
-            <Label styleClass="intestazione" text="Allo sportello"/>
+            <Label fx:id="lblSportello" styleClass="intestazione" text="Allo sportello"/>
             <TextArea fx:id="areaColloquio" editable="false" wrapText="true" VBox.vgrow="ALWAYS"/>
             <HBox spacing="10">
                 <Button fx:id="btnColloquio" onAction="#onColloquio" text="Concedi colloquio"/>

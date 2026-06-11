@@ -56,6 +56,8 @@ public class ScrivaniaController {
     @FXML
     private Label lblAvviso;
     @FXML
+    private Label lblSportello;
+    @FXML
     private ListView<String> listaDocumenti;
     @FXML
     private TextArea areaDocumento;
@@ -107,11 +109,10 @@ public class ScrivaniaController {
         servizio.setOsservatoreArrivi(inAttesa -> Platform.runLater(this::onArrivo));
         if (servizio.getGiornata() == null) {
             if (!servizio.avviaGiornata()) {
-                mostraMessaggio(Alert.AlertType.INFORMATION, "Pensionamento con onore",
-                        "Non ci sono piu' anime da giudicare: il Funzionario "
-                                + contesto.getPartita().getFunzionario().getNome()
-                                + " ha meritato il riposo eterno (quello buono).");
-                router.vai("menu");
+                // Difesa in profondita': il pensionamento e' gestito da chi
+                // naviga verso la scrivania. Qui non si cambia scena durante
+                // il caricamento FXML: la navigazione va solo rimandata.
+                Platform.runLater(() -> router.vai("menu"));
                 return;
             }
             annunciaCircolareDelGiorno();
@@ -193,6 +194,7 @@ public class ScrivaniaController {
     }
 
     private void modalitaAttesa() {
+        lblSportello.setText("Allo sportello");
         areaColloquio.setText("Lo sportello e' vuoto.\n\nIn attesa del prossimo arrivo...");
         listaDocumenti.getItems().clear();
         areaDocumento.clear();
@@ -338,6 +340,8 @@ public class ScrivaniaController {
         if (fascicolo == null) {
             return;
         }
+        lblSportello.setText("Allo sportello: " + fascicolo.getAnima().getNome()
+                + " - anno di morte " + fascicolo.getAnima().getAnnoMorte());
         areaColloquio.setText(fascicolo.getAnima().presentazione());
         listaDocumenti.getItems().setAll(fascicolo.getDocumenti().stream()
                 .map(this::etichettaDocumento)
