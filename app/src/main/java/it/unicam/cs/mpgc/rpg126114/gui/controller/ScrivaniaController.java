@@ -143,29 +143,39 @@ public class ScrivaniaController {
             return;
         }
         StringBuilder testo = new StringBuilder();
+
+        testo.append("=== REGOLE IN VIGORE OGGI ===\n\n");
+        int numero = 1;
         for (Regola regola : servizio.getGiornata().getRegolamento().getRegole()) {
-            testo.append("• ").append(regola.descrizione()).append('\n')
-                    .append(regola.spiegazione()).append("\n\n");
+            testo.append(numero).append(". ").append(regola.descrizione()).append('\n');
+            testo.append("   ").append(regola.spiegazione()).append("\n\n");
+            numero++;
         }
-        testo.append("TIMBRI DISPONIBILI\n");
+
+        testo.append("=== COME SI DECIDE ===\n\n");
+        testo.append("- Ogni regola applicabile vota una destinazione con un peso.\n");
+        testo.append("- Vince la destinazione con il peso totale piu' alto.\n");
+        testo.append("- A parita' di peso prevale la destinazione piu' severa\n");
+        testo.append("  (Paradiso < Purgatorio < Limbo < Inferno).\n");
+        testo.append("- Il timbro scelto moltiplica il karma, nel bene e nel male.\n\n");
+
+        testo.append("=== TIMBRI DISPONIBILI ===\n\n");
         for (Timbro timbro : contesto.getPartita().getFunzionario().timbriDisponibili()) {
-            testo.append("• ").append(timbro.getEtichetta())
-                    .append(" (karma x").append(timbro.getMoltiplicatore()).append(")\n");
+            testo.append("- ").append(timbro.getEtichetta())
+                    .append(": karma x").append(timbro.getMoltiplicatore()).append('\n');
         }
-        testo.append("\nCOME SI DECIDE\n");
-        testo.append("Ogni regola applicabile vota una destinazione con un peso. ");
-        testo.append("Vince il peso totale piu' alto; a parita' prevale la ");
-        testo.append("destinazione piu' severa. Il timbro moltiplica il karma ");
-        testo.append("nel bene e nel male.\n");
-        testo.append("\nPROCEDURE D'UFFICIO\n");
-        testo.append("• Denuncia impostore: se l'anima risulta gia' giudicata, +")
-                .append(GiornataService.KARMA_DENUNCIA_CORRETTA)
-                .append(" karma; infondata ")
-                .append(GiornataService.PENALE_DENUNCIA_ERRATA).append(".\n");
-        testo.append("• Giudicare un impostore senza accorgersene: ")
+        testo.append('\n');
+
+        testo.append("=== PROCEDURE D'UFFICIO ===\n\n");
+        testo.append("- Denuncia di un impostore fondata: +")
+                .append(GiornataService.KARMA_DENUNCIA_CORRETTA).append(" karma.\n");
+        testo.append("- Denuncia infondata: ")
+                .append(GiornataService.PENALE_DENUNCIA_ERRATA).append(" karma.\n");
+        testo.append("- Impostore giudicato senza accorgersene: ")
                 .append(GiornataService.PENALE_IMPOSTORE_GIUDICATO)
-                .append(" e pratica respinta.\n");
-        testo.append("• Le anime erranti ricordano al piu' una dichiarazione.\n");
+                .append(" karma e pratica respinta.\n");
+        testo.append("- Le anime erranti ricordano al piu' una dichiarazione.\n");
+
         areaRegolamento.setText(testo.toString());
     }
 
@@ -346,7 +356,13 @@ public class ScrivaniaController {
         listaDocumenti.getItems().setAll(fascicolo.getDocumenti().stream()
                 .map(this::etichettaDocumento)
                 .toList());
+        // La nuova pratica ha di nuovo la Fedina in prima posizione: azzero
+        // la selezione prima di riselezionarla, cosi' il dettaglio si
+        // aggiorna anche quando l'indice resterebbe a 0 (il listener
+        // scatta solo sui cambi di valore).
+        listaDocumenti.getSelectionModel().clearSelection();
         listaDocumenti.getSelectionModel().selectFirst();
+        mostraDocumento(0);
         comboTimbro.getItems().setAll(
                 contesto.getPartita().getFunzionario().timbriDisponibili());
         comboTimbro.getSelectionModel().selectFirst();
