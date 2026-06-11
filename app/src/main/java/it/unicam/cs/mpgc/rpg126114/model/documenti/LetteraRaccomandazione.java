@@ -41,6 +41,7 @@ public class LetteraRaccomandazione extends Documento {
 
     @Override
     public String contenuto() {
-        return "\"Chi scrive garantisce per l'anima qui presente.\" Firmato: " + firmatario + ".";
+        return "\"Chi scrive garantisce per l'anima qui presente.\"\nFirmato: "
+                + firmatario + " (influenza " + peso + "/" + PESO_MASSIMO + ").";
     }
 }

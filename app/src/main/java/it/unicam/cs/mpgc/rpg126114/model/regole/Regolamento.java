@@ -43,21 +43,34 @@ public class Regolamento {
     }
 
     /**
-     * Combina gli esiti delle regole applicabili: vince la destinazione
-     * con il peso totale piu' alto; a parita' di peso prevale la piu'
-     * severa. Se nessuna regola si applica, l'anima va in Purgatorio
-     * per smistamento d'ufficio.
+     * Valuta il fascicolo in un unico passaggio e produce il verbale:
+     * vince la destinazione con il peso totale piu' alto, a parita' di
+     * peso prevale la piu' severa; se nessuna regola si applica l'anima
+     * va in Purgatorio per smistamento d'ufficio. Le motivazioni
+     * riportano regola, peso ed esito.
      *
      * @param fascicolo il fascicolo a giudizio
-     * @return la destinazione prevista dal regolamento
+     * @return il verbale con destinazione prevista e motivazioni
      * @throws it.unicam.cs.mpgc.rpg126114.model.documenti.PraticaMalformataException
      *         se il fascicolo non e' valido
      */
-    public Destinazione destinazioneAttesa(Fascicolo fascicolo) {
+    public Verbale verbale(Fascicolo fascicolo) {
         fascicolo.valida();
-        Map<Destinazione, Integer> pesiPerDestinazione = regole.stream()
-                .map(regola -> regola.valuta(fascicolo))
-                .flatMap(Optional::stream)
+        List<Esito> esiti = new ArrayList<>();
+        List<String> motivazioni = new ArrayList<>();
+        for (Regola regola : regole) {
+            Optional<Esito> esito = regola.valuta(fascicolo);
+            if (esito.isPresent()) {
+                esiti.add(esito.get());
+                motivazioni.add(regola.descrizione() + " [peso " + esito.get().getPeso()
+                        + "]: " + esito.get().getMotivazione());
+            }
+        }
+        return new Verbale(destinazionePiuVotata(esiti), motivazioni);
+    }
+
+    private Destinazione destinazionePiuVotata(List<Esito> esiti) {
+        Map<Destinazione, Integer> pesiPerDestinazione = esiti.stream()
                 .collect(Collectors.groupingBy(Esito::getDestinazione,
                         Collectors.summingInt(Esito::getPeso)));
         return pesiPerDestinazione.entrySet().stream()
@@ -69,19 +82,19 @@ public class Regolamento {
     }
 
     /**
-     * Le motivazioni a verbale di tutte le regole applicabili al fascicolo.
-     *
+     * @param fascicolo il fascicolo a giudizio
+     * @return la destinazione prevista dal regolamento
+     */
+    public Destinazione destinazioneAttesa(Fascicolo fascicolo) {
+        return verbale(fascicolo).getDestinazione();
+    }
+
+    /**
      * @param fascicolo il fascicolo a giudizio
      * @return una motivazione per ogni regola applicabile, in ordine di regola
      */
     public List<String> motivazioni(Fascicolo fascicolo) {
-        fascicolo.valida();
-        return regole.stream()
-                .map(regola -> regola.valuta(fascicolo)
-                        .map(esito -> regola.descrizione() + " [peso " + esito.getPeso() + "]: "
-                                + esito.getMotivazione()))
-                .flatMap(Optional::stream)
-                .collect(Collectors.toList());
+        return verbale(fascicolo).getMotivazioni();
     }
 
     @Override

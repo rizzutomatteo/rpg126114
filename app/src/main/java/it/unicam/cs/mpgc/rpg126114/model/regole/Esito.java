@@ -10,6 +10,15 @@ public final class Esito {
 
     public static final int PESO_MINIMO = 1;
 
+    /** Peso di un semplice indizio. */
+    public static final int PESO_INDIZIO = 1;
+
+    /** Peso di un'indicazione forte. */
+    public static final int PESO_FORTE = 2;
+
+    /** Peso di una prova determinante. */
+    public static final int PESO_DETERMINANTE = 3;
+
     private final Destinazione destinazione;
     private final int peso;
     private final String motivazione;

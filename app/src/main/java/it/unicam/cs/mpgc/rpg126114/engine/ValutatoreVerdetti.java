@@ -3,6 +3,7 @@ package it.unicam.cs.mpgc.rpg126114.engine;
 import it.unicam.cs.mpgc.rpg126114.model.carriera.Funzionario;
 import it.unicam.cs.mpgc.rpg126114.model.documenti.Fascicolo;
 import it.unicam.cs.mpgc.rpg126114.model.regole.Regolamento;
+import it.unicam.cs.mpgc.rpg126114.model.regole.Verbale;
 import it.unicam.cs.mpgc.rpg126114.model.verdetti.Destinazione;
 import it.unicam.cs.mpgc.rpg126114.model.verdetti.Verdetto;
 
@@ -37,10 +38,11 @@ public class ValutatoreVerdetti {
                     "Il verdetto riguarda " + verdetto.getAnima()
                             + " ma il fascicolo e' di " + fascicolo.getAnima());
         }
-        Destinazione attesa = regolamento.destinazioneAttesa(fascicolo);
-        boolean corretto = attesa == verdetto.getDestinazione();
+        Verbale verbale = regolamento.verbale(fascicolo);
+        boolean corretto = verbale.getDestinazione() == verdetto.getDestinazione();
         int delta = karmaPer(corretto, funzionario) * verdetto.getTimbro().getMoltiplicatore();
-        return new EsitoValutazione(corretto, delta, attesa, regolamento.motivazioni(fascicolo));
+        return new EsitoValutazione(corretto, delta, verbale.getDestinazione(),
+                verbale.getMotivazioni());
     }
 
     private int karmaPer(boolean corretto, Funzionario funzionario) {

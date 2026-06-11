@@ -26,7 +26,7 @@ public class RegolaAnzianita implements Regola {
         if (annoMorte >= annoLimite) {
             return Optional.empty();
         }
-        return Optional.of(new Esito(Destinazione.LIMBO, 2,
+        return Optional.of(new Esito(Destinazione.LIMBO, Esito.PESO_FORTE,
                 "in attesa dal " + annoMorte + ", prima dell'anno limite " + annoLimite));
     }
 
@@ -39,6 +39,6 @@ public class RegolaAnzianita implements Regola {
     public String spiegazione() {
         return "Le anime morte prima del " + annoLimite + " hanno atteso troppo "
                 + "per i criteri moderni: spettano al Limbo, qualunque cosa "
-                + "dica il resto del fascicolo.";
+                + "dica il resto del fascicolo. Vota con peso " + Esito.PESO_FORTE + ".";
     }
 }

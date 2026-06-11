@@ -174,6 +174,9 @@ class RegoleTest {
         }
         assertTrue(new RegolaBilancioKarmico(5, -5).spiegazione().contains("5"));
         assertTrue(new RegolaAnzianita(1700).spiegazione().contains("1700"));
+        assertTrue(new RegolaContraddizioni().spiegazione()
+                .contains(String.valueOf(Peccato.SOGLIA_CAPITALE)));
+        assertTrue(new RegolaPentimento().spiegazione().contains("peso"));
     }
 
     @Test
